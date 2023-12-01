@@ -28,24 +28,23 @@ namespace CloudSaba.Controllers
                 return View("About");
             }
 
-            // GET: HomeController/Product
-            public async Task<IActionResult> Product()
+            // GET: HomeController/Products
+            public ActionResult Product()
             {
                 ViewBag.Place = "Product";
-
-                // Fetch products from the database
-                var products = await _context.IceCream
-                    .Select(p => new IceCream
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Price = p.Price,
-                        ImageUrl = p.ImageUrl,
-                        Details = p.Details
-                    })
-                    .ToListAsync();
-
-                return View(products);
+                var iceCreams = _context.IceCream.ToList();
+                return View("Product", iceCreams);
+            //// Fetch products from the database
+            //var products = await _context.IceCream
+            //    .Select(p => new IceCream
+            //    {
+            //        Id = p.Id,
+            //        Name = p.Name,
+            //        Price = p.Price,
+            //        ImageUrl = p.ImageUrl,
+            //        Details = p.Details
+            //    })
+            //    .ToListAsync();
             }
 
             public ActionResult Gallery()

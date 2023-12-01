@@ -1,6 +1,26 @@
 (function ($) {
     "use strict";
-    
+    $('.add-to-cart-btn').click(function () {
+        // Get product ID from the button's data attribute
+        console.log('Button Clicked!');
+        var productId = $(this).data('product-id');
+
+        // Make an AJAX request to the AddToCart action in the Cart controller
+        $.ajax({
+            url: addToCartUrl,
+            type: 'POST',
+            data: { productId: productId },
+            success: function (result) {
+                // Handle the result if needed
+                console.log(result);
+                alert('Product added to cart!');
+            },
+            error: function () {
+                // Handle errors if needed
+                console.error('Error adding product to cart');
+            }
+        });
+    });
     // Smooth scrolling on the navbar links
     $(".navbar-nav a").on('click', function (event) {
         if (this.hash !== "") {

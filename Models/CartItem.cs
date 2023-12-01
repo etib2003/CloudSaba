@@ -16,8 +16,6 @@ namespace CloudSaba.Models
 
         public System.DateTime DateCreated { get; set; }
 
-        public string? FlavourId { get; set; }
-
         public string? OrderId { get; set; }
     }
 }
