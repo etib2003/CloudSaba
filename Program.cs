@@ -1,8 +1,11 @@
-using CloudSaba.Data;
+﻿using CloudSaba.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<CloudSabaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CloudSabaContext") ?? throw new InvalidOperationException("Connection string 'CloudSabaContext' not found.")));
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
