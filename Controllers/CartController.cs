@@ -34,10 +34,11 @@ namespace CloudSaba.Controllers
             var existingItem = cartItems.FirstOrDefault(
                      cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
                      );
-            if(existingItem != null)
+            if (existingItem != null)
             {
                 // Update quantity if the item is already in the cart
                 existingItem.Quantity += 1;
+                existingItem.Price += itemInfo.Price;
             }
             else
             {
@@ -52,6 +53,34 @@ namespace CloudSaba.Controllers
                     DateCreated = DateTime.Now,
                     OrderId = "1234", //todo: update with the order
                 });
+            }
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, message = "Product added to cart" });
+        }
+        //[ValidateAntiForgeryToken] //ETI by GPT:Ensure that sensitive operations like modifying the cart are protected from cross-site request forgery (CSRF) attacks. You can do this by adding the [ValidateAntiForgeryToken] attribute to your actions.
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromCart(string productId)
+        {
+            var products = _context.IceCream.ToList();
+            var itemInfo = products.FirstOrDefault(p => p.Id == productId);
+            if (itemInfo == null)
+            {
+                //todo: problem! throw...
+            }
+            string cartId = "123";//GetOrCreateCartId();
+            var cartItems = _context.CartItem.ToList();
+            var existingItem = cartItems.FirstOrDefault(
+                     cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
+                     );
+            if (existingItem != null)
+            {
+                // Update quantity if the item is already in the cart
+                existingItem.Quantity -= 1;
+                existingItem.Price -= itemInfo.Price;
+            }
+            else
+            {
+                //todo: problem!
             }
             await _context.SaveChangesAsync();
             return Json(new { success = true, message = "Product added to cart" });

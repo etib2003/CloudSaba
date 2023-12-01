@@ -24,7 +24,7 @@
                                 <img class="rounded-circle w-100 h-100" src="~/@iceCream.ImageUrl" style="object-fit: cover;">
                             </div>
                             <h5 class="font-weight-bold mb-4">@iceCream.Name</h5>
-                            <button @* id="addToCartBtn" *@ data-product-id="@iceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
+                            <button data-product-id="@iceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
                             <button data-product-id="@iceCream.Id" class="btn btn-sm btn-danger remove-from-cart-btn">Remove</button>
                         </div>
                     </div>
@@ -36,6 +36,9 @@
 </main>
 <script>
     var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
+</script>
+<script>
+    var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
 </script>
 
 

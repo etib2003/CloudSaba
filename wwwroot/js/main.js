@@ -21,6 +21,27 @@
             }
         });
     });
+    $('.remove-from-cart-btn').click(function () {
+        // Get product ID from the button's data attribute
+        console.log('Button Clicked!');
+        var productId = $(this).data('product-id');
+
+        // Make an AJAX request to the AddToCart action in the Cart controller
+        $.ajax({
+            url: removeFromCartUrl,
+            type: 'POST',
+            data: { productId: productId },
+            success: function (result) {
+                // Handle the result if needed
+                console.log(result);
+                alert('Product The product has been deleted from the cartadded to cart!');
+            },
+            error: function () {
+                // Handle errors if needed
+                console.error('Problem deleting a product from the cart');
+            }
+        });
+    });
     // Smooth scrolling on the navbar links
     $(".navbar-nav a").on('click', function (event) {
         if (this.hash !== "") {
