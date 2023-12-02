@@ -2,14 +2,14 @@
 {
     public class CartView
     {
-        public List<CartItem> CartItems { get; set; }
-        //public List<Flavour> Flavours { get; set; }
+        public CartItem CartItem { get; set; }
+        public IceCream IceCream { get; set; }
 
-        public decimal Total()
-        {
-            decimal total = 0;
-            foreach (var item in CartItems) { total += item.Price; }
-            return total;
-        }
+        //public decimal Total()
+        //{
+        //    decimal total = 0;
+        //    foreach (var item in CartItems) { total += item.Price; }
+        //    return total;
+        //}
     }
 }

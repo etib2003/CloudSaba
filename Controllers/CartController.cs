@@ -8,13 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using CloudSaba.Data;
 using CloudSaba.Models;
 using CloudSaba.Migrations;
+using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.Azure.Amqp.Framing;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.IO;
 
 namespace CloudSaba.Controllers
 {
     public class CartController : Controller
     {
         private readonly CloudSabaContext _context;
-
         public CartController(CloudSabaContext context)
         {
             _context = context;
@@ -56,6 +60,7 @@ namespace CloudSaba.Controllers
             }
             await _context.SaveChangesAsync();
             return Json(new { success = true, message = "Product added to cart" });
+            
         }
         //[ValidateAntiForgeryToken] //ETI by GPT:Ensure that sensitive operations like modifying the cart are protected from cross-site request forgery (CSRF) attacks. You can do this by adding the [ValidateAntiForgeryToken] attribute to your actions.
         [HttpPost]
@@ -83,7 +88,58 @@ namespace CloudSaba.Controllers
                 //todo: problem!
             }
             await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Product added to cart" });
+            return Json(new { success = true, message = "Product removed from cart" });
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> MyCart()
+        {
+            // Assuming you have a DbSet<IceCream> in your DbContext called IceCreams
+            var cartItemsWithIceCream = await (
+                from cartItem in _context.CartItem
+                join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
+                where cartItem.CartId == "123" // Your filter condition
+                select new CartView
+                {
+                    CartItem = cartItem,
+                    IceCream = iceCream
+                }
+            ).ToListAsync();
+            ViewBag.Place = "My Cart";
+            return View(cartItemsWithIceCream);
+        }
+
+        [HttpPost]
+        public IActionResult Pay(string creditCard, string phoneNumber, string fullName, decimal total)
+        {
+            // Validate payment information if needed
+            string cartId = "123";
+            // Create a new order with the provided information
+            var newOrder = new Models.Order
+            {
+                FirstName = fullName.Split(' ')[0],
+                LastName = fullName.Split(' ')[1],
+                PhoneNumber = phoneNumber,
+                Email = "talu@gmail.com",
+                Street = "rt",
+                City = "hh",
+                HouseNumber = 5,
+                Total = (double)total,
+                Products = _context.CartItem.Where(ci => ci.CartId == cartId).ToList(),
+                Date = DateTime.Now,
+                FeelsLike = 43,
+                Humidity = 34,
+                IsItHoliday = true,
+                Day = Models.DayOfWeek.Tuesday
+                // Add other properties as needed
+            };
+
+            // Add the order to the database
+            _context.Order.Add(newOrder);
+            _context.SaveChanges();
+
+            // You can return a JSON response indicating success or failure
+            return Json(new { success = true });
         }
 
         // GET: Cart
