@@ -67,6 +67,7 @@
                         <input type="text" id="creditCard" placeholder="Credit Card Number" class="form-control">
                         <input type="text" id="phoneNumber" placeholder="Phone Number" class="form-control">
                         <input type="text" id="fullName" placeholder="Full Name" class="form-control">
+                        <input type="text" id="email" placeholder="Email" class="form-control">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -99,20 +100,21 @@
             var creditCard = $('#creditCard').val();
             var phoneNumber = $('#phoneNumber').val();
             var fullName = $('#fullName').val();
-
+            var email = $('#email').val();
             // Perform validation if needed
 
             // Call a function to submit payment and create order
-            submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName);
+            submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email);
         });
     });
 
-    function submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName) {
+    function submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email, total) {
         // Use AJAX or another method to send payment information to the server
         $.post('/Cart/Pay', {
             creditCard: creditCard,
             phoneNumber: phoneNumber,
             fullName: fullName,
+            email: email,
             total: @totalSum, // Assuming totalSum is the total on the cart page
         }, function (response) {
             // Handle the response from the server
@@ -120,7 +122,6 @@
                 // Payment successful, close the modal or redirect to a thank you page
                 $('#paymentModal').modal('hide');
                 // Optionally redirect to a thank you page
-                window.location.href = '/ThankYou';
             } else {
                 // Payment failed, display an error message
                 alert('Payment failed. Please try again.');

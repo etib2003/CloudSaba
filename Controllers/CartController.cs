@@ -110,7 +110,7 @@ namespace CloudSaba.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay(string creditCard, string phoneNumber, string fullName, decimal total)
+        public IActionResult Pay(string creditCard, string phoneNumber, string fullName, string email, decimal total)
         {
             // Validate payment information if needed
             string cartId = "123";
@@ -120,7 +120,7 @@ namespace CloudSaba.Controllers
                 FirstName = fullName.Split(' ')[0],
                 LastName = fullName.Split(' ')[1],
                 PhoneNumber = phoneNumber,
-                Email = "talu@gmail.com",
+                Email = email,
                 Street = "rt",
                 City = "hh",
                 HouseNumber = 5,
