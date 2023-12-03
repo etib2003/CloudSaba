@@ -8,6 +8,8 @@
 <main>
     <div class="container">
         <h1 class="mt-5 mb-3">My Cart</h1>
+        @if (Model[0].IceCream != null)
+        {
         <div class="container" id="cart-container">
             <table class="table">
                 <thead>
@@ -24,7 +26,7 @@
                     @foreach (var cartView in Model)
                     {
                         <tr>
-                            <td class="icecream-image" style="width: 50px; height: 50px;">
+                            <td class="icecream-image" style="width: 150px; height: 150px;">
                                 <img class="rounded-circle w-100 h-100" src="~/@cartView.IceCream.ImageUrl" style="object-fit: cover;">
                             </td>
                             @*   <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td> *@
@@ -59,9 +61,39 @@
                     <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
                 </div>
             </div> *@
+                <div class="col-md-12">
+
+                    <a asp-action="Thank" asp-controller="Home" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
+                </div>
+            <div class="col-md-12">
+
+                @* <a asp-action="Ordering" asp-controller="Home" class="btn btn-primary" id="payButton">PayToOrder</a> *@
+            </div>
             <button class="btn btn-success" id="payButton">Pay</button>
 
+
+
+       
+        }
+        else
+        {
+        <div class="row">
+            <div class="col-md-6 align-self-center">
+                <img src="https://cdn.dribbble.com/users/351694/screenshots/10760065/media/c93e509e870484db932891b96447bd85.gif" alt="EmptyCartImage" class="img-fluid" width="800" height="600">
+            </div>
+            <div class="col-md-6 align-self-center">
+                <h1>Oops!</h1>
+                <h2>Your cart is empty.</h2>
+                <p>
+                    Your cart is feeling rather lonely!
+                    Time to fill it with some goodies.
+                    Click the button below to start shopping.
+                </p>
+                <a class="genric-btn primary radius" asp-controller="Home" asp-action="Flavours">Back To Shop</a>
+            </div>
         </div>
+
+        }
         <!-- Add this code at the end of your HTML file, before closing </main> -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -131,7 +163,7 @@
             phoneNumber: phoneNumber,
             fullName: fullName,
             email: email,
-            total: @totalSum, // Assuming totalSum is the total on the cart page
+            total: totalSum, // Assuming totalSum is the total on the cart page
         }, function (response) {
             // Handle the response from the server
             if (response.success) {
@@ -147,3 +179,4 @@
 
 </script>
 
+}

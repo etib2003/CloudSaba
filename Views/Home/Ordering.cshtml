@@ -1,0 +1,238 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Ordering";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<main>
+	<!-- Breadcrumb Start-->
+	<div class="page-notification">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb justify-content-center">
+							<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+							<li class="breadcrumb-item"><a asp-action="Index">Cart</a></li>
+							<li class="breadcrumb-item"><a href="#">Ordering</a></li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="site-section">
+		<div class="container">
+			<form id="checkout-form" asp-controller="Orders" asp-action="CreateOrder" method="post" class="form-contact">
+				@Html.AntiForgeryToken()
+
+				<div class="row">
+					<div class="col-md-6 mb-5 mb-md-0">
+						<h2 class="h3 mb-3 text-black">Billing Details</h2>
+						<div class="p-3 p-lg-5 mb-10 border">
+							<div class="form-group row">
+								<div class="col-md-6">
+									<label asp-for="FirstName" class="text-black">First Name <span class="text-danger">*</span></label>
+									<input asp-for="FirstName" type="text" class="form-control" id="c_fname">
+								</div>
+								<div class="col-md-6">
+									<label asp-for="LastName" class="text-black">Last Name <span class="text-danger">*</span></label>
+									<input asp-for="LastName" type="text" class="form-control" id="c_lname">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-md-12">
+									<label asp-for="City" class="text-black">Address <span class="text-danger">*</span></label>
+									<input asp-for="City" type="text" class="form-control" id="c_address" placeholder="City">
+								</div>
+							</div>
+							<div class="form-group">
+								<input asp-for="Street" type="text" class="form-control" placeholder="Street address">
+							</div>
+							<div class="form-group">
+								<input asp-for="HouseNumber" type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
+							</div>
+							<div class="validation-summary-errors mb-4">
+								@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+							</div>
+							<div class="form-group row mb-5">
+								<div class="col-md-6">
+									<label asp-for="Email" class="text-black">Email Address <span class="text-danger">*</span></label>
+									<input asp-for="Email" type="text" class="form-control" id="c_email_address">
+								</div>
+								<div class="col-md-6">
+									<label asp-for="PhoneNumber" class="text-black">Phone <span class="text-danger">*</span></label>
+									<input asp-for="PhoneNumber" type="text" class="form-control" id="c_phone" placeholder="Phone Number">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="c_order_notes" class="text-black">Order Notes</label>
+								<textarea class="form-control" id="c_order_notes" cols="30" rows="5" placeholder="Write your notes here..."></textarea>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="row mb-5">
+							<div class="col-md-12">
+								<h2 class="h3 mb-3 text-black">Your Order</h2>
+								<div class="p-3 p-lg-5 border">
+									<table class="table site-block-order-table mb-5">
+										<thead>
+										<th>Product</th>
+										<th>Total</th>
+										</thead>
+										<tbody>
+											@for (var i = 0; i < Model.Products.Count; i++)
+											{
+												var cartItem = Model.Products[i];
+												<tr>
+													<td>
+														<a class="flavourLink" asp-controller="Cart" asp-action="GetFlavourNameById" asp-route-id="@cartItem.ItemId" style="color:black;">
+
+															<span class="flavourName"></span>
+														</a>
+														<strong class="mx-2">x</strong> @cartItem.Weight Liter
+													</td>
+													<td>@cartItem.Price.ToString("F2")$</td>
+												</tr>
+												<input type="hidden" name="Products[@i].CartId" value="@cartItem.CartId" />
+												<input type="hidden" name="Products[@i].ItemId" value="@cartItem.ItemId+'12'" />
+												<input type="hidden" name="Products[@i].FlavourId" value="@cartItem.ItemId" />
+												<input type="hidden" name="Products[@i].Size" value="@cartItem.Weight" />
+												<input type="hidden" name="Products[@i].Price" value="@cartItem.Price" />
+
+											}
+											<tr>
+												<td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+												<td class="text-black font-weight-bold"><strong>@Model.Total.ToString("F2")$</strong></td>
+												<input type="hidden" asp-for="Total" value="@Model.Total" />
+											</tr>
+										</tbody>
+									</table>
+									@if (TempData["OrderPayed"] as bool? != true)
+									{
+										<div class="border p-3 mb-5">
+
+											<div id="paypal-button-container"></div>
+											<script data-sdk-integration-source="integrationbuilder_sc"
+													src="https://www.paypal.com/sdk/js?client-id=ATaR0ncvoOm38jdm-Jg3Nloh1NzbJ_YeBXy5B3-_2Jo0yQQQizWVQdIfuiOCxwCHulyCZzY2Ytk46J1U&components=buttons"></script>
+
+											@using Newtonsoft.Json
+											<script>
+												const FUNDING_SOURCES = [
+													// EDIT FUNDING SOURCES
+													paypal.FUNDING.PAYPAL,
+													paypal.FUNDING.CARD
+												];
+												FUNDING_SOURCES.forEach(fundingSource => {
+													paypal.Buttons({
+														fundingSource,
+
+														style: {
+															layout: 'vertical',
+															shape: 'rect',
+															color: (fundingSource == paypal.FUNDING.PAYLATER) ? 'gold' : '',
+														},
+
+														createOrder: function (data, actions) {
+															var items = @Html.Raw(JsonConvert.SerializeObject((@Model.Products as IEnumerable <CloudSaba.Models.CartItem>)!.Select(item => new
+															{
+															sku = (item.ItemId+100000000).ToString(),
+															quantity = 1,
+															name = "flavour "+(item.ItemId).ToString(),
+															unit_amount = new
+															{
+															currency_code = "USD",
+															value = item.Price.ToString("0.00")
+															}
+															})));
+															return actions.order.create({
+																purchase_units: [
+																	{
+																		amount: {
+																			currency_code: 'USD',
+																			value: '@Model.Total.ToString("F2")',
+																			breakdown:
+																			{
+																				item_total:
+																				{
+																					currency_code: "USD",
+																					value: '@Model.Total.ToString("F2")'
+																				}
+																			}
+
+																		},
+																		items: items
+																	}
+																]
+
+															});
+
+														},
+														onApprove: function (data, actions) {
+															// Capture the funds from the transaction
+															return actions.order.capture().then(function (details) {
+																// Call your server to save the transaction
+																try {
+																	document.getElementById("checkout-form").submit();
+																}
+																catch (error) {
+																	console.error(error);
+																	// Handle the error or display an appropriate error message to the user
+																	alert('An error occurred while processing your payment. Please try again later.');
+																}
+
+															});
+														}
+
+
+
+													}).render("#paypal-button-container");
+												})
+											</script>
+
+										</div>
+									}
+									@if (TempData["OrderPayed"] as bool? == true)
+									{
+										<h3 class="text-danger">Payment succeded, One or more of the details feilds is missing/ incorrect</h3>
+										<button type="submit" name="tryAgain" value="true" class="btn">Try Again</button>
+									}
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			$(".flavourLink").each(function () {
+				var link = $(this);
+				var flavourId = link.data("flavour-id");
+				var flavourNameElement = link.closest("tr").find(".flavourName");
+
+				$.ajax({
+					type: "GET",
+					url: link.attr("href"), // Use the link's href as the URL
+					data: { id: flavourId },
+					success: function (data) {
+						flavourNameElement.text(data); // Insert the returned data into the span
+					},
+					error: function () {
+						// Handle error if the AJAX request fails
+					}
+				});
+			});
+		});
+	</script>
+</main>

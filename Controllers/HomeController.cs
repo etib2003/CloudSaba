@@ -93,10 +93,11 @@ namespace CloudSaba.Controllers
                 }
             }
 
-            // GET: HomeController/Edit/5
-            public ActionResult Edit(int id)
+
+            public ActionResult Ordering()
             {
-                return View();
+			ViewBag.Place = "Ordering";
+			return View(Ordering);
             }
 
             // POST: HomeController/Edit/5
