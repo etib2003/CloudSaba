@@ -53,6 +53,7 @@
                 <td></td>
             </tr>
             <button class="btn btn-success" id="payButton">Pay</button>
+            <div id="thankYouContainer"></div>
     </div>
         <!-- Add this code at the end of your HTML file, before closing </main> -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
@@ -79,7 +80,7 @@
                 </div>
             </div>
         </div>
-
+        <div class="modal fade" id="thankYouModal" tabindex="-1" role="dialog" aria-labelledby="thankYouModalLabel" aria-hidden="true">
     <!-- Add your footer content here -->
 </main>
 <script>
@@ -123,7 +124,7 @@
             // Handle the response from the server
             if (response.success) {
                 // Payment successful, close the modal or redirect to a thank you page
-                $('#paymentModal').modal('hide');
+                $('#thankYouModal').modal('hide');
                 // Optionally redirect to a thank you page
             } else {
                 // Payment failed, display an error message
@@ -131,7 +132,15 @@
             }
         });
     }
+    function displayThankYouMessage() {
+        // Display a thank you message to the user
+        var thankYouMessage = '<div class="alert alert-success" role="alert">';
+        thankYouMessage += 'Thank you for your order! Have a nice day.';
+        thankYouMessage += '</div>';
 
+        // Append the message to a container div
+        $('#thankYouContainer').html(thankYouMessage);
+    }
 
 </script>
 

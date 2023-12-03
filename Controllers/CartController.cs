@@ -165,11 +165,12 @@ namespace CloudSaba.Controllers
             // Add the order to the database
             _context.Order.Add(newOrder);
             _context.SaveChanges();
-            HttpContext.Session.Remove("CartId");
 
-            ViewBag.Place = "Thank You";
-            return View("ThankYou");
+            // Clear the entire session after processing the payment
+            HttpContext.Session.Clear();
+            return Json(new { success = true, message = "Payment successful" });
         }
+
         // Add this method to configure session services
         private void ConfigureSessionServices(IServiceCollection services)
         {
