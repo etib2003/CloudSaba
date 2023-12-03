@@ -13,6 +13,9 @@ using Microsoft.Azure.Amqp.Framing;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace CloudSaba.Controllers
 {
@@ -22,6 +25,26 @@ namespace CloudSaba.Controllers
         public CartController(CloudSabaContext context)
         {
             _context = context;
+            // Configure session services
+            ConfigureSessionServices(services: new ServiceCollection());
+        }
+        private string GetOrCreateCartId()
+        {
+            string cartId;
+
+            if (HttpContext.Session.TryGetValue("CartId", out var cartIdBytes))
+            {
+                // If the cart ID is already in the session, use it
+                cartId = System.Text.Encoding.UTF8.GetString(cartIdBytes);
+            }
+            else
+            {
+                // If no cart ID in the session, generate a new one and store it
+                cartId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("CartId", cartId);
+            }
+
+            return cartId;
         }
         [HttpPost]
         public async Task<IActionResult> AddToCart(string productId)
@@ -33,7 +56,8 @@ namespace CloudSaba.Controllers
                 //todo: problem! throw...
             }
             // Get or create a unique cart identifier for the user
-            string cartId = "123";//GetOrCreateCartId();
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
             var cartItems = _context.CartItem.ToList();
             var existingItem = cartItems.FirstOrDefault(
                      cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
@@ -55,8 +79,8 @@ namespace CloudSaba.Controllers
                     Price = itemInfo.Price,
                     Weight = 1,
                     DateCreated = DateTime.Now,
-                    OrderId = "1234", //todo: update with the order
-                });
+                    OrderId = Guid.NewGuid().ToString()
+            });
             }
             await _context.SaveChangesAsync();
             return Json(new { success = true, message = "Product added to cart" });
@@ -72,7 +96,8 @@ namespace CloudSaba.Controllers
             {
                 //todo: problem! throw...
             }
-            string cartId = "123";//GetOrCreateCartId();
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
             var cartItems = _context.CartItem.ToList();
             var existingItem = cartItems.FirstOrDefault(
                      cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
@@ -94,11 +119,13 @@ namespace CloudSaba.Controllers
         [HttpGet]
         public async Task<IActionResult> MyCart()
         {
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
             // Assuming you have a DbSet<IceCream> in your DbContext called IceCreams
             var cartItemsWithIceCream = await (
                 from cartItem in _context.CartItem
                 join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
-                where cartItem.CartId == "123" // Your filter condition
+                where cartItem.CartId == cartId 
                 select new CartView
                 {
                     CartItem = cartItem,
@@ -112,8 +139,9 @@ namespace CloudSaba.Controllers
         [HttpPost]
         public IActionResult Pay(string creditCard, string phoneNumber, string fullName, string email, decimal total)
         {
+            HttpContext.Session.LoadAsync().Wait();
             // Validate payment information if needed
-            string cartId = "123";
+            string cartId = GetOrCreateCartId();
             // Create a new order with the provided information
             var newOrder = new Models.Order
             {
@@ -137,11 +165,28 @@ namespace CloudSaba.Controllers
             // Add the order to the database
             _context.Order.Add(newOrder);
             _context.SaveChanges();
+            HttpContext.Session.Remove("CartId");
 
-            // You can return a JSON response indicating success or failure
-            return Json(new { success = true });
+            ViewBag.Place = "Thank You";
+            return View("ThankYou");
+        }
+        // Add this method to configure session services
+        private void ConfigureSessionServices(IServiceCollection services)
+        {
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout as needed
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
         }
 
+        // Add this method to configure session middleware
+        private void ConfigureSessionMiddleware(IApplicationBuilder app)
+        {
+            app.UseSession();
+        }
         // GET: Cart
         public async Task<IActionResult> Index()
         {
