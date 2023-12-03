@@ -71,10 +71,11 @@ namespace CloudSaba.Controllers
                 return View();
             }
 
-            // GET: HomeController/Create
-            public ActionResult Create()
+            // GET: HomeController/Thank
+            public ActionResult Thank()
             {
-                return View();
+            ViewBag.Place = "Thank";
+            return View("Thank");
             }
 
             // POST: HomeController/Create

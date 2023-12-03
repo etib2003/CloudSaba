@@ -40,6 +40,7 @@
                     }
                 </tbody>
             </table>
+    
             <tr>
                 <td colspan="4"></td>
                 <td>Total:</td>
@@ -51,8 +52,15 @@
                     @totalSum
                 </td>
                 <td></td>
+                  
             </tr>
+@*             <div class="row">
+                <div class="col-md-12">
+                    <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
+                </div>
+            </div> *@
             <button class="btn btn-success" id="payButton">Pay</button>
+
         </div>
         <!-- Add this code at the end of your HTML file, before closing </main> -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
@@ -74,7 +82,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="confirmPayment">Pay</button>
+                        @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
+                        <div class="col-md-12">
+                           
+                            <a asp-action="Thank" asp-controller="Home" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -131,7 +144,6 @@
             }
         });
     }
-
 
 </script>
 
