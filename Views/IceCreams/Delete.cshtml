@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Delete";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
 }
 
 <h1>Delete</h1>
@@ -27,9 +27,9 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ImageUrl)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
+        <div class="icecream-image" style="width: 500px; height: 500px;">
+            <img class="rounded-circle w-100 h-100" src="~/@Model.ImageUrl" style="object-fit: cover;">
+        </div>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Details)
         </dt>

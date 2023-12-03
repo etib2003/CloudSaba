@@ -1,4 +1,4 @@
-﻿using CloudSaba.Data;
+using CloudSaba.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

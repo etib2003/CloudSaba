@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using CloudSaba.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CloudSaba.Data
 {
