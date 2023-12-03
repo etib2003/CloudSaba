@@ -171,8 +171,8 @@ namespace CloudSaba.Controllers
 
             // Add the order to the database
             _context.Order.Add(newOrder);
+            _context.CartItem.RemoveRange(_context.CartItem);
             _context.SaveChanges();
-
             // Clear the entire session after processing the payment
             HttpContext.Session.Clear();
             return Json(new { success = true, message = "Payment successful" });
