@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudSaba", "CloudSaba.csproj", "{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudSaba", "CloudSaba.csproj", "{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIgateway", "..\..\ApiGateway\APIgateway\APIgateway.csproj", "{B19B19F6-8297-45A1-A13A-65FDCB39D396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B19B19F6-8297-45A1-A13A-65FDCB39D396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B19B19F6-8297-45A1-A13A-65FDCB39D396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B19B19F6-8297-45A1-A13A-65FDCB39D396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B19B19F6-8297-45A1-A13A-65FDCB39D396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
