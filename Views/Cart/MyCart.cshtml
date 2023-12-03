@@ -1,0 +1,134 @@
+﻿@model List<CartView>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<main>
+    <div class="container">
+        <h1 class="mt-5 mb-3">My Cart</h1>
+        <div class="container" id="cart-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cartView in Model)
+                {
+                    <tr>
+                        <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td>
+                        <td>@cartView.IceCream.Name</td>
+                        <td>@cartView.IceCream.Price</td>
+                        <td>@cartView.CartItem.Quantity</td>
+                        <td>@(cartView.CartItem.Quantity * cartView.IceCream.Price)</td>
+                        <td>
+                            <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
+                            <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-danger remove-from-cart-btn">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+            <tr>
+                <td colspan="4"></td>
+                <td>Total:</td>
+                <td class="text-center">
+                    @{
+                        // Calculate the total sum
+                        decimal totalSum = Model.Sum(cartView => cartView.CartItem.Quantity * cartView.IceCream.Price);
+                    }
+                    @totalSum
+                </td>
+                <td></td>
+            </tr>
+            <button class="btn btn-success" id="payButton">Pay</button>
+    </div>
+        <!-- Add this code at the end of your HTML file, before closing </main> -->
+        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paymentModalLabel">Enter Payment Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add your input fields for credit card, phone number, and name here -->
+                        <!-- Example: -->
+                        <input type="text" id="creditCard" placeholder="Credit Card Number" class="form-control">
+                        <input type="text" id="phoneNumber" placeholder="Phone Number" class="form-control">
+                        <input type="text" id="fullName" placeholder="Full Name" class="form-control">
+                        <input type="text" id="email" placeholder="Email" class="form-control">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="confirmPayment">Pay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Add your footer content here -->
+</main>
+<script>
+    var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
+</script>
+<script>
+    var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
+</script>
+<!-- Example using a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Add this script at the end of your HTML file, before closing </body> -->
+<script>
+    $(document).ready(function () {
+        $('#payButton').click(function () {
+            $('#paymentModal').modal('show');
+        });
+
+        // Add additional logic here to handle payment confirmation
+        $('#confirmPayment').click(function () {
+            // Get values from input fields
+            var creditCard = $('#creditCard').val();
+            var phoneNumber = $('#phoneNumber').val();
+            var fullName = $('#fullName').val();
+            var email = $('#email').val();
+            // Perform validation if needed
+
+            // Call a function to submit payment and create order
+            submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email);
+        });
+    });
+
+    function submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email, total) {
+        // Use AJAX or another method to send payment information to the server
+        $.post('/Cart/Pay', {
+            creditCard: creditCard,
+            phoneNumber: phoneNumber,
+            fullName: fullName,
+            email: email,
+            total: @totalSum, // Assuming totalSum is the total on the cart page
+        }, function (response) {
+            // Handle the response from the server
+            if (response.success) {
+                // Payment successful, close the modal or redirect to a thank you page
+                $('#paymentModal').modal('hide');
+                // Optionally redirect to a thank you page
+            } else {
+                // Payment failed, display an error message
+                alert('Payment failed. Please try again.');
+            }
+        });
+    }
+
+
+</script>
+

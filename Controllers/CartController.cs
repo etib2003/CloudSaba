@@ -8,16 +8,43 @@ using Microsoft.EntityFrameworkCore;
 using CloudSaba.Data;
 using CloudSaba.Models;
 using CloudSaba.Migrations;
+using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.Azure.Amqp.Framing;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace CloudSaba.Controllers
 {
     public class CartController : Controller
     {
         private readonly CloudSabaContext _context;
-
         public CartController(CloudSabaContext context)
         {
             _context = context;
+            // Configure session services
+            ConfigureSessionServices(services: new ServiceCollection());
+        }
+        private string GetOrCreateCartId()
+        {
+            string cartId;
+
+            if (HttpContext.Session.TryGetValue("CartId", out var cartIdBytes))
+            {
+                // If the cart ID is already in the session, use it
+                cartId = System.Text.Encoding.UTF8.GetString(cartIdBytes);
+            }
+            else
+            {
+                // If no cart ID in the session, generate a new one and store it
+                cartId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("CartId", cartId);
+            }
+
+            return cartId;
         }
         [HttpPost]
         public async Task<IActionResult> AddToCart(string productId)
@@ -29,7 +56,8 @@ namespace CloudSaba.Controllers
                 //todo: problem! throw...
             }
             // Get or create a unique cart identifier for the user
-            string cartId = "123";//GetOrCreateCartId();
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
             var cartItems = _context.CartItem.ToList();
             var existingItem = cartItems.FirstOrDefault(
                      cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
@@ -51,11 +79,12 @@ namespace CloudSaba.Controllers
                     Price = itemInfo.Price,
                     Weight = 1,
                     DateCreated = DateTime.Now,
-                    OrderId = "1234", //todo: update with the order
-                });
+                    OrderId = Guid.NewGuid().ToString()
+            });
             }
             await _context.SaveChangesAsync();
             return Json(new { success = true, message = "Product added to cart" });
+            
         }
         //[ValidateAntiForgeryToken] //ETI by GPT:Ensure that sensitive operations like modifying the cart are protected from cross-site request forgery (CSRF) attacks. You can do this by adding the [ValidateAntiForgeryToken] attribute to your actions.
         [HttpPost]
@@ -67,7 +96,8 @@ namespace CloudSaba.Controllers
             {
                 //todo: problem! throw...
             }
-            string cartId = "123";//GetOrCreateCartId();
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
             var cartItems = _context.CartItem.ToList();
             var existingItem = cartItems.FirstOrDefault(
                      cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
@@ -83,9 +113,80 @@ namespace CloudSaba.Controllers
                 //todo: problem!
             }
             await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Product added to cart" });
+            return Json(new { success = true, message = "Product removed from cart" });
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> MyCart()
+        {
+            HttpContext.Session.LoadAsync().Wait();
+            string cartId = GetOrCreateCartId();
+            // Assuming you have a DbSet<IceCream> in your DbContext called IceCreams
+            var cartItemsWithIceCream = await (
+                from cartItem in _context.CartItem
+                join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
+                where cartItem.CartId == cartId 
+                select new CartView
+                {
+                    CartItem = cartItem,
+                    IceCream = iceCream
+                }
+            ).ToListAsync();
+            ViewBag.Place = "My Cart";
+            return View(cartItemsWithIceCream);
         }
 
+        [HttpPost]
+        public IActionResult Pay(string creditCard, string phoneNumber, string fullName, string email, decimal total)
+        {
+            HttpContext.Session.LoadAsync().Wait();
+            // Validate payment information if needed
+            string cartId = GetOrCreateCartId();
+            // Create a new order with the provided information
+            var newOrder = new Models.Order
+            {
+                FirstName = fullName.Split(' ')[0],
+                LastName = fullName.Split(' ')[1],
+                PhoneNumber = phoneNumber,
+                Email = email,
+                Street = "rt",
+                City = "hh",
+                HouseNumber = 5,
+                Total = (double)total,
+                Products = _context.CartItem.Where(ci => ci.CartId == cartId).ToList(),
+                Date = DateTime.Now,
+                FeelsLike = 43,
+                Humidity = 34,
+                IsItHoliday = true,
+                Day = Models.DayOfWeek.Tuesday
+                // Add other properties as needed
+            };
+
+            // Add the order to the database
+            _context.Order.Add(newOrder);
+            _context.SaveChanges();
+            HttpContext.Session.Remove("CartId");
+
+            ViewBag.Place = "Thank You";
+            return View("ThankYou");
+        }
+        // Add this method to configure session services
+        private void ConfigureSessionServices(IServiceCollection services)
+        {
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout as needed
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+        }
+
+        // Add this method to configure session middleware
+        private void ConfigureSessionMiddleware(IApplicationBuilder app)
+        {
+            app.UseSession();
+        }
         // GET: Cart
         public async Task<IActionResult> Index()
         {

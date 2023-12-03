@@ -33,6 +33,10 @@
         </div>
     </div>
     <!-- Products End -->
+    <!-- Add the "My Cart" link here -->
+    <div class="text-center">
+        <a asp-action="MyCart" asp-controller="Cart" class="btn btn-primary">My Cart</a>
+    </div>
 </main>
 <script>
     var addToCartUrl = '@Url.Action("AddToCart", "Cart")';

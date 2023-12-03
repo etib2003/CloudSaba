@@ -4,7 +4,7 @@
         // Get product ID from the button's data attribute
         console.log('Button Clicked!');
         var productId = $(this).data('product-id');
-
+        var sourceParameter = { source: 'returnJson' };
         // Make an AJAX request to the AddToCart action in the Cart controller
         $.ajax({
             url: addToCartUrl,
@@ -25,7 +25,7 @@
         // Get product ID from the button's data attribute
         console.log('Button Clicked!');
         var productId = $(this).data('product-id');
-
+        var sourceParameter = { source: 'returnJson' };
         // Make an AJAX request to the AddToCart action in the Cart controller
         $.ajax({
             url: removeFromCartUrl,
@@ -42,6 +42,9 @@
             }
         });
     });
+
+
+
     // Smooth scrolling on the navbar links
     $(".navbar-nav a").on('click', function (event) {
         if (this.hash !== "") {
