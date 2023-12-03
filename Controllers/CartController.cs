@@ -97,30 +97,38 @@ namespace CloudSaba.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(string productId)
         {
-            var products = _context.IceCream.ToList();
-            var itemInfo = products.FirstOrDefault(p => p.Id == productId);
-            if (itemInfo == null)
+            try 
             {
-                //todo: problem! throw...
+                var products = _context.IceCream.ToList();
+                var itemInfo = products.FirstOrDefault(p => p.Id == productId);
+                if (itemInfo == null)
+                {
+                    //todo: problem! throw...
+                }
+                HttpContext.Session.LoadAsync().Wait();
+                string cartId = GetOrCreateCartId();
+                var cartItems = _context.CartItem.ToList();
+                var existingItem = cartItems.FirstOrDefault(
+                         cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
+                         );
+                if (existingItem != null)
+                {
+                    // Update quantity if the item is already in the cart
+                    existingItem.Quantity -= 1;
+                    existingItem.Price -= itemInfo.Price;
+                }
+                else
+                {
+                    //todo: problem!
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Product removed from cart" });
+
             }
-            HttpContext.Session.LoadAsync().Wait();
-            string cartId = GetOrCreateCartId();
-            var cartItems = _context.CartItem.ToList();
-            var existingItem = cartItems.FirstOrDefault(
-                     cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
-                     );
-            if (existingItem != null)
+            catch (Exception ex)
             {
-                // Update quantity if the item is already in the cart
-                existingItem.Quantity -= 1;
-                existingItem.Price -= itemInfo.Price;
+                return Json(new { success = false, message = ex.ToString() });
             }
-            else
-            {
-                //todo: problem!
-            }
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Product removed from cart" });
 
         }
         [HttpGet]

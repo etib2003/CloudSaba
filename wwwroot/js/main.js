@@ -18,7 +18,10 @@
             error: function () {
                 // Handle errors if needed
                 console.error('Error adding product to cart');
-            }
+            },
+            complete: function () {
+                // Reload the page after the AJAX request is complete
+                location.reload();
         });
     });
     $('.remove-from-cart-btn').click(function () {
@@ -39,7 +42,10 @@
             error: function () {
                 // Handle errors if needed
                 console.error('Problem deleting a product from the cart');
-            }
+            },
+            complete: function () {
+                // Reload the page after the AJAX request is complete
+                location.reload();
         });
     });
 
