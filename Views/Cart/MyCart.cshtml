@@ -9,37 +9,37 @@
     <div class="container">
         <h1 class="mt-5 mb-3">My Cart</h1>
         <div class="container" id="cart-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cartView in Model)
-                {
+            <table class="table">
+                <thead>
                     <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cartView in Model)
+                    {
+                        <tr>
                             <td class="icecream-image" style="width: 50px; height: 50px;">
                                 <img class="rounded-circle w-100 h-100" src="~/@cartView.IceCream.ImageUrl" style="object-fit: cover;">
                             </td>
-                      @*   <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td> *@
-                        <td>@cartView.IceCream.Name</td>
-                        <td>@cartView.IceCream.Price</td>
-                        <td>@cartView.CartItem.Quantity</td>
-                        <td>@(cartView.CartItem.Quantity * cartView.IceCream.Price)</td>
-                        <td>
-                            <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
-                            <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-danger remove-from-cart-btn">Remove</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            @*   <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td> *@
+                            <td>@cartView.IceCream.Name</td>
+                            <td>@cartView.IceCream.Price</td>
+                            <td>@cartView.CartItem.Quantity</td>
+                            <td>@(cartView.CartItem.Quantity * cartView.IceCream.Price)</td>
+                            <td>
+                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
+                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-danger remove-from-cart-btn">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
             <tr>
                 <td colspan="4"></td>
                 <td>Total:</td>
@@ -53,8 +53,7 @@
                 <td></td>
             </tr>
             <button class="btn btn-success" id="payButton">Pay</button>
-            <div id="thankYouContainer"></div>
-    </div>
+        </div>
         <!-- Add this code at the end of your HTML file, before closing </main> -->
         <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -80,8 +79,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="thankYouModal" tabindex="-1" role="dialog" aria-labelledby="thankYouModalLabel" aria-hidden="true">
-    <!-- Add your footer content here -->
+
+        <!-- Add your footer content here -->
 </main>
 <script>
     var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
@@ -124,7 +123,7 @@
             // Handle the response from the server
             if (response.success) {
                 // Payment successful, close the modal or redirect to a thank you page
-                $('#thankYouModal').modal('hide');
+                $('#paymentModal').modal('hide');
                 // Optionally redirect to a thank you page
             } else {
                 // Payment failed, display an error message
@@ -132,15 +131,7 @@
             }
         });
     }
-    function displayThankYouMessage() {
-        // Display a thank you message to the user
-        var thankYouMessage = '<div class="alert alert-success" role="alert">';
-        thankYouMessage += 'Thank you for your order! Have a nice day.';
-        thankYouMessage += '</div>';
 
-        // Append the message to a container div
-        $('#thankYouContainer').html(thankYouMessage);
-    }
 
 </script>
 
