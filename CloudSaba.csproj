@@ -23,8 +23,8 @@
     <Folder Include="Areas\Identity\Data\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <ProjectReference Include="..\..\ApiGateway\APIgateway\APIgateway.csproj" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
