@@ -18,8 +18,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddSession();
-var app = builder.Build();
+builder.Services.AddHttpClient();
 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CloudSaba.Data;
 using CloudSaba.Models;
+using Newtonsoft.Json;
 
 namespace CloudSaba.Controllers
 {
@@ -18,6 +19,35 @@ namespace CloudSaba.Controllers
         {
             _context = context;
         }
+
+        public async Task<bool> CheckImage(string imageURL)
+        {
+            var apiUrl = $"http://localhost:5050/ImaggaApi/CheckImage?imageUrl={imageURL}";
+
+            // Create an instance of HttpClient
+            using (var httpClient = new System.Net.Http.HttpClient())
+            {
+                // Send a GET request to the other project's endpoint
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = response.Content.ReadAsStringAsync().Result;
+
+                    // Deserialize the response content manually
+                    var result = JsonConvert.DeserializeObject<bool?>(content);
+
+                    // Use the result directly in the if statement
+                    return result ?? false; // If result is null, default to false
+                }
+                else
+                {
+                    // Handle the error
+                    return false; // Return false or handle the error accordingly
+                }
+            }
+        }
+
 
         // GET: IceCreams
         public async Task<IActionResult> Index()
@@ -51,6 +81,7 @@ namespace CloudSaba.Controllers
             return View();
         }
 
+        
         // POST: IceCreams/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -60,12 +91,22 @@ namespace CloudSaba.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(iceCream);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                bool isIceCream = await CheckImage(iceCream.ImageUrl.ToString());
+                if (isIceCream)
+                {
+                    _context.Add(iceCream);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("ImageUrl", "Image does not contain ice cream. Please provide a valid image.");
+
+                }
             }
             return View(iceCream);
         }
+
 
         // GET: IceCreams/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -97,23 +138,31 @@ namespace CloudSaba.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                bool isIceCream = await CheckImage(iceCream.ImageUrl.ToString());
+                if (isIceCream)
                 {
-                    _context.Update(iceCream);
-                    await _context.SaveChangesAsync();
+                    try
+                    {
+                        _context.Update(iceCream);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!IceCreamExists(iceCream.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!IceCreamExists(iceCream.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("ImageUrl", "Image does not contain ice cream. Please provide a valid image.");
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(iceCream);
         }
