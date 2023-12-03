@@ -83,10 +83,10 @@ namespace CloudSaba.Controllers
             }
         }
 
-        //public IActionResult GraphCreate()
-        //{
-        //    return View();
-        //}
+        public IActionResult GraphCreate()
+        {
+            return View();
+        }
         public IActionResult Graph(DateTime? start, DateTime? end)
         {
             var orders = _context.Order.Where(order => order.Date >= start && order.Date <= end).ToList();
