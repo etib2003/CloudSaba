@@ -24,7 +24,10 @@
                 @foreach (var cartView in Model)
                 {
                     <tr>
-                        <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td>
+                            <td class="icecream-image" style="width: 50px; height: 50px;">
+                                <img class="rounded-circle w-100 h-100" src="~/@cartView.IceCream.ImageUrl" style="object-fit: cover;">
+                            </td>
+                      @*   <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td> *@
                         <td>@cartView.IceCream.Name</td>
                         <td>@cartView.IceCream.Price</td>
                         <td>@cartView.CartItem.Quantity</td>
