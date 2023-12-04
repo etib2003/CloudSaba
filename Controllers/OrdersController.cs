@@ -88,7 +88,8 @@ namespace CloudSaba.Controllers
             return View();
         }
         public IActionResult Graph(DateTime? start, DateTime? end)
-        {
+        
+       {
             var orders = _context.Order.Where(order => order.Date >= start && order.Date <= end).ToList();
 
             // Prepare data for the view model
