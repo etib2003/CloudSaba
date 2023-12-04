@@ -8,8 +8,11 @@
     <!-- Include PayPal JavaScript SDK -->
     <script src="https://www.paypal.com/sdk/js?client-id=AeW75ddn1jvC9WLXakf-WMAJk7tVRZr_JiP5tMnipP_Vbr852_8m3MNhKDB4oONgxNASvmMMe2zrfF2z&components=buttons"></script>
 </head>
+
 <body>
-    <div id="paypal-button-container" style="max-width:1000px;"></div>
+    <div id="paypal-button-container" style="max-width: 1000px;"></div>
+    <button onclick="redirectToThankYou()" style="background-color: pink; color: white; padding: 10px; margin-top: 10px;">Thank You</button>
+
     <script>
         function getUrlParameter(name) {
             name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
@@ -17,6 +20,7 @@
             var results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
+
         function createPaypalPayment() {
             if (!totalAmount) {
                 alert("totalSum amount is missing.");
@@ -53,10 +57,16 @@
             }).render('#paypal-button-container');
         }
 
+        function redirectToThankYou() {
+            // Redirect to the "Thank You" view
+            window.location.href = '/Home/Thank';
+        }
 
         var totalAmount = getUrlParameter("totalSum");
         createPaypalPayment();
 
     </script>
 </body>
+
 </html>
+

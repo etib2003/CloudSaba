@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudSaba", "CloudSaba.csproj", "{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIgateway", "..\..\ApiGateway\APIgateway\APIgateway.csproj", "{91EA3F2C-380A-427D-8CFA-2A38CF58FAB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIgateway", "..\APIgateway\APIgateway.csproj", "{F85F734D-3A28-4BCD-845B-ADB9B1F00392}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60FC8D62-F7D5-4BE6-A4C8-B10A66AAFFBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91EA3F2C-380A-427D-8CFA-2A38CF58FAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91EA3F2C-380A-427D-8CFA-2A38CF58FAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91EA3F2C-380A-427D-8CFA-2A38CF58FAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91EA3F2C-380A-427D-8CFA-2A38CF58FAB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F85F734D-3A28-4BCD-845B-ADB9B1F00392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F85F734D-3A28-4BCD-845B-ADB9B1F00392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F85F734D-3A28-4BCD-845B-ADB9B1F00392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F85F734D-3A28-4BCD-845B-ADB9B1F00392}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
