@@ -49,71 +49,86 @@ namespace CloudSaba.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(string productId)
         {
-            var products = _context.IceCream.ToList();
-            var itemInfo = products.FirstOrDefault(p => p.Id == productId);
-            if (itemInfo == null)
+            try
             {
-                //todo: problem! throw...
-            }
-            // Get or create a unique cart identifier for the user
-            HttpContext.Session.LoadAsync().Wait();
-            string cartId = GetOrCreateCartId();
-            var cartItems = _context.CartItem.ToList();
-            var existingItem = cartItems.FirstOrDefault(
-                     cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
-                     );
-            if (existingItem != null)
-            {
-                // Update quantity if the item is already in the cart
-                existingItem.Quantity += 1;
-                existingItem.Price += itemInfo.Price;
-            }
-            else
-            {
-                // Add a new item to the cart
-                _context.Add(new CartItem
+                var products = _context.IceCream.ToList();
+                var itemInfo = products.FirstOrDefault(p => p.Id == productId);
+                if (itemInfo == null)
                 {
-                    ItemId = productId,
-                    CartId = cartId,
-                    Quantity = 1,
-                    Price = itemInfo.Price,
-                    Weight = 1,
-                    DateCreated = DateTime.Now,
-                    OrderId = Guid.NewGuid().ToString()
-            });
+                    //todo: problem! throw...
+                }
+                // Get or create a unique cart identifier for the user
+                HttpContext.Session.LoadAsync().Wait();
+                string cartId = GetOrCreateCartId();
+                var cartItems = _context.CartItem.ToList();
+                var existingItem = cartItems.FirstOrDefault(
+                         cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
+                         );
+                if (existingItem != null)
+                {
+                    // Update quantity if the item is already in the cart
+                    existingItem.Quantity += 1;
+                    existingItem.Price += itemInfo.Price;
+                }
+                else
+                {
+                    // Add a new item to the cart
+                    _context.Add(new CartItem
+                    {
+                        ItemId = productId,
+                        CartId = cartId,
+                        Quantity = 1,
+                        Price = itemInfo.Price,
+                        Weight = 1,
+                        DateCreated = DateTime.Now,
+                        OrderId = Guid.NewGuid().ToString()
+                    });
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Product added to cart" });
             }
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Product added to cart" });
+              catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.ToString() });
+            }  
             
         }
         //[ValidateAntiForgeryToken] //ETI by GPT:Ensure that sensitive operations like modifying the cart are protected from cross-site request forgery (CSRF) attacks. You can do this by adding the [ValidateAntiForgeryToken] attribute to your actions.
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(string productId)
         {
-            var products = _context.IceCream.ToList();
-            var itemInfo = products.FirstOrDefault(p => p.Id == productId);
-            if (itemInfo == null)
+            try 
             {
-                //todo: problem! throw...
+                var products = _context.IceCream.ToList();
+                var itemInfo = products.FirstOrDefault(p => p.Id == productId);
+                if (itemInfo == null)
+                {
+                    //todo: problem! throw...
+                }
+                HttpContext.Session.LoadAsync().Wait();
+                string cartId = GetOrCreateCartId();
+                var cartItems = _context.CartItem.ToList();
+                var existingItem = cartItems.FirstOrDefault(
+                         cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
+                         );
+                if (existingItem != null)
+                {
+                    // Update quantity if the item is already in the cart
+                    existingItem.Quantity -= 1;
+                    existingItem.Price -= itemInfo.Price;
+                }
+                else
+                {
+                    //todo: problem!
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Product removed from cart" });
+
             }
-            HttpContext.Session.LoadAsync().Wait();
-            string cartId = GetOrCreateCartId();
-            var cartItems = _context.CartItem.ToList();
-            var existingItem = cartItems.FirstOrDefault(
-                     cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
-                     );
-            if (existingItem != null)
+            catch (Exception ex)
             {
-                // Update quantity if the item is already in the cart
-                existingItem.Quantity -= 1;
-                existingItem.Price -= itemInfo.Price;
+                return Json(new { success = false, message = ex.ToString() });
             }
-            else
-            {
-                //todo: problem!
-            }
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Product removed from cart" });
 
         }
         [HttpGet]
@@ -164,8 +179,8 @@ namespace CloudSaba.Controllers
 
             // Add the order to the database
             _context.Order.Add(newOrder);
+            _context.CartItem.RemoveRange(_context.CartItem);
             _context.SaveChanges();
-
             // Clear the entire session after processing the payment
             HttpContext.Session.Clear();
             return Json(new { success = true, message = "Payment successful" });

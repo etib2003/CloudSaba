@@ -1,5 +1,9 @@
 (function ($) {
     "use strict";
+    // Function to reload the page
+    function reloadPage() {
+        location.reload();
+    }
     $('.add-to-cart-btn').click(function () {
         // Get product ID from the button's data attribute
         console.log('Button Clicked!');
@@ -14,6 +18,7 @@
                 // Handle the result if needed
                 console.log(result);
                 alert('Product added to cart!');
+                reloadPage(); // Reload the page
             },
             error: function () {
                 // Handle errors if needed
@@ -35,6 +40,7 @@
                 // Handle the result if needed
                 console.log(result);
                 alert('Product The product has been deleted from the cartadded to cart!');
+                reloadPage(); // Reload the page
             },
             error: function () {
                 // Handle errors if needed

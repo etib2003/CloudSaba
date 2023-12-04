@@ -83,6 +83,34 @@ namespace CloudSaba.Controllers
             }
         }
 
+        public IActionResult GraphCreate()
+        {
+            return View();
+        }
+        public IActionResult Graph(DateTime? start, DateTime? end)
+        
+       {
+            var orders = _context.Order.Where(order => order.Date >= start && order.Date <= end).ToList();
+
+            // Prepare data for the view model
+            var dateLabels = orders.Select(order => order.Date.ToShortDateString()).Distinct().ToList();
+            var totalPrices = new List<double>();
+
+            foreach (var dateLabel in dateLabels)
+            {
+                totalPrices.Add(orders.Where(order => order.Date.ToShortDateString() == dateLabel).Sum(order => order.Total));
+            }
+
+            var viewModel = new OrderGraphViewModel
+            {
+                DateLabels = dateLabels,
+                TotalPrices = totalPrices
+            };
+
+            return View(viewModel); // Pass the view model to the view
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<bool> IsItHoliday()

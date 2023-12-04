@@ -40,7 +40,7 @@
                     }
                 </tbody>
             </table>
-    
+
             <tr>
                 <td colspan="4"></td>
                 <td>Total:</td>
@@ -52,12 +52,12 @@
                     @totalSum
                 </td>
                 <td></td>
-                  
+
             </tr>
-@*             <div class="row">
-                <div class="col-md-12">
-                    <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
-                </div>
+            @*             <div class="row">
+            <div class="col-md-12">
+            <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
+            </div>
             </div> *@
             <button class="btn btn-success" id="payButton">Pay</button>
 
@@ -84,16 +84,16 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
                         <div class="col-md-12">
-                           
+
                             <a asp-action="Thank" asp-controller="Home" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Add your footer content here -->
+    <!-- Add your footer content here -->
 </main>
 <script>
     var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
@@ -147,3 +147,4 @@
 
 </script>
 
+}

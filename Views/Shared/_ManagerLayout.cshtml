@@ -41,7 +41,8 @@
             <div class="row">
                 <div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
                     <div class="d-inline-flex align-items-center">
-                        <a class="text-white pr-3" href="~/">Hello Manager</a>
+                        <a class="text-white pr-3" href="/Manager/Index">Hello Manager</a>
+                        <a href=" /Identity/Account/Register" class="text-white pr-3">SignIn</a>
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-lg-right">
@@ -68,6 +69,9 @@
                         <a href="@Url.Action("Index", "Home")" class='nav-item nav-link @(ViewBag.Place == "Home" ? "active" : "")'>Home</a>
                         <a href="@Url.Action("Index", "IceCreams")" class='nav-item nav-link @(ViewBag.Place == "Index" ? "active" : "")'>Flavors</a>
                         <a href="@Url.Action("Index", "Orders")" class="nav-item nav-link @(ViewBag.Place == "Index" ? "active" : "")">Orders</a>
+                        
+                        <a href="@Url.Action("Graph", "Orders")" class="nav-item nav-link @(ViewBag.Place == "Graph" ? "active" : "")">Graph</a>
+                      
                     </div>
 
 
