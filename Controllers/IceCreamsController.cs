@@ -8,46 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using CloudSaba.Data;
 using CloudSaba.Models;
 using Newtonsoft.Json;
+using CloudSaba.Services;
 
 namespace CloudSaba.Controllers
 {
     public class IceCreamsController : Controller
     {
         private readonly CloudSabaContext _context;
+        private readonly ApiServices _apiServices; // Add this line
 
-        public IceCreamsController(CloudSabaContext context)
+
+        public IceCreamsController(CloudSabaContext context, ApiServices apiServices) // Add ApiServices parameter
         {
             _context = context;
+            _apiServices = apiServices; // Initialize ApiServices
+
         }
-
-        public async Task<bool> CheckImage(string imageURL)
-        {
-            var apiUrl = $"http://localhost:5050/ImaggaApi/CheckImage?imageUrl={imageURL}";
-
-            // Create an instance of HttpClient
-            using (var httpClient = new System.Net.Http.HttpClient())
-            {
-                // Send a GET request to the other project's endpoint
-                var response = await httpClient.GetAsync(apiUrl);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = response.Content.ReadAsStringAsync().Result;
-
-                    // Deserialize the response content manually
-                    var result = JsonConvert.DeserializeObject<bool?>(content);
-
-                    // Use the result directly in the if statement
-                    return result ?? false; // If result is null, default to false
-                }
-                else
-                {
-                    // Handle the error
-                    return false; // Return false or handle the error accordingly
-                }
-            }
-        }
-
 
         // GET: IceCreams
         public async Task<IActionResult> Index()
@@ -91,7 +67,7 @@ namespace CloudSaba.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool isIceCream = await CheckImage(iceCream.ImageUrl.ToString());
+                bool isIceCream = await _apiServices.CheckImage(iceCream.ImageUrl.ToString());
                 if (isIceCream)
                 {
                     _context.Add(iceCream);
@@ -138,7 +114,7 @@ namespace CloudSaba.Controllers
 
             if (ModelState.IsValid)
             {
-                bool isIceCream = await CheckImage(iceCream.ImageUrl.ToString());
+                bool isIceCream = await _apiServices.CheckImage(iceCream.ImageUrl.ToString());
                 if (isIceCream)
                 {
                     try

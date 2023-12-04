@@ -2,6 +2,8 @@ using CloudSaba.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using CloudSaba.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CloudSabaContext>(options =>
@@ -19,6 +21,8 @@ builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddSession();
 builder.Services.AddHttpClient();
+// Add ApiServices
+builder.Services.AddSingleton<ApiServices>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
