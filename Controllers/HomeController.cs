@@ -94,10 +94,14 @@ namespace CloudSaba.Controllers
             }
 
 
-            public ActionResult Ordering()
+            public ActionResult Ordering(decimal totalSum)
             {
-			ViewBag.Place = "Ordering";
-			return View(Ordering);
+            // Process the values as needed in your Ordering action
+            // You can pass them to the view or perform any other logic
+
+            // Example: Pass values to the view
+            ViewBag.TotalSum = totalSum;
+            return View("Ordering");
             }
 
             // POST: HomeController/Edit/5

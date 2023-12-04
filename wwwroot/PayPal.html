@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Payment</title>
+    <!-- Include PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AeW75ddn1jvC9WLXakf-WMAJk7tVRZr_JiP5tMnipP_Vbr852_8m3MNhKDB4oONgxNASvmMMe2zrfF2z&components=buttons"></script>
+</head>
+<body>
+    <div id="paypal-button-container" style="max-width:1000px;"></div>
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        function createPaypalPayment() {
+            if (!totalAmount) {
+                alert("totalSum amount is missing.");
+                return;
+            }
+
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: totalAmount,
+                                currency_code: 'USD'
+                            }
+                        }]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    alert("ההזמנה בוצעה בהצלחה!תודה שקנית אצלנו:)");
+
+                    var createButton = window.opener.document.getElementById("createButton");
+                    if (createButton) {
+                        createButton.disabled = false;
+                    }
+
+                    if (createButton) {
+                        createButton.click();
+                    }
+                },
+
+                style: {
+                    disableMaxWidth: true
+                },
+            }).render('#paypal-button-container');
+        }
+
+
+        var totalAmount = getUrlParameter("totalSum");
+        createPaypalPayment();
+
+    </script>
+</body>
+</html>

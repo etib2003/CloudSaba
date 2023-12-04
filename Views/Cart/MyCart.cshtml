@@ -7,8 +7,8 @@
 <!DOCTYPE html>
 <main>
     <div class="container">
-        <h1 class="mt-5 mb-3">My Cart</h1>
-        <div class="container" id="cart-container">
+        @if (Model.Any())
+        {
             <table class="table">
                 <thead>
                     <tr>
@@ -55,96 +55,121 @@
 
             </tr>
             @*             <div class="row">
-            <div class="col-md-12">
-            <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
-            </div>
-            </div> *@
-            <button class="btn btn-success" id="payButton">Pay</button>
-
+        <div class="col-md-12">
+        <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
         </div>
-        <!-- Add this code at the end of your HTML file, before closing </main> -->
-        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="paymentModalLabel">Enter Payment Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Add your input fields for credit card, phone number, and name here -->
-                        <!-- Example: -->
-                        <input type="text" id="creditCard" placeholder="Credit Card Number" class="form-control">
-                        <input type="text" id="phoneNumber" placeholder="Phone Number" class="form-control">
-                        <input type="text" id="fullName" placeholder="Full Name" class="form-control">
-                        <input type="text" id="email" placeholder="Email" class="form-control">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
-                        <div class="col-md-12">
+        </div> *@
+            <button class="btn btn-success" id="payButton">Pay</button>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <img src="https://media.giphy.com/media/a8XENaB1v6H5kHK8of/giphy.gif" alt="EmptyCartImage" class="img-fluid" width="800" height="600">
+                </div>
+                <div class="col-md-6 align-self-center">
+                    <h1>Oops!</h1>
+                    <h2>Your cart is empty.</h2>
+                    <p>
+                        Your cart is feeling rather lonely!
+                        Time to fill it with some goodies.
+                        Click the button below to start shopping.
+                    </p>
+                    <a class="genric-btn primary radius" asp-controller="Home" asp-action="Flavours">Back To Shop</a>
+                </div>
+            </div>
+        }
 
-                            <a asp-action="Thank" asp-controller="Home" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
+
+                <!-- Add this code at the end of your HTML file, before closing </main> -->
+                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="paymentModalLabel">Enter Payment Information</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Add your input fields for credit card, phone number, and name here -->
+                                <!-- Example: -->
+                                <input type="text" id="phoneNumber" placeholder="Phone Number" class="form-control">
+                                <input type="text" id="fullName" placeholder="Full Name" class="form-control">
+                                <input type="text" id="email" placeholder="Email" class="form-control">
+                                <input type="text" id="street" placeholder="Street" class="form-control">
+                                <input type="text" id="city" placeholder="City" class="form-control">
+                                <input type="text" id="houseNumber" placeholder="House Number" class="form-control">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
+                                <div class="col-md-12">
+
+                                <a href="~/path/to/PayPal.html" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- Add your footer content here -->
+        <!-- Example using a CDN -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
+        </script>
+            <script>
+                var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
+            </script>
+            <!-- Add this script at the end of your HTML file, before closing </body> -->
+            <script>
+                $(document).ready(function () {
+                $('#payButton').click(function () {
+                    $('#paymentModal').modal('show');
+                });
 
-    <!-- Add your footer content here -->
-</main>
-<script>
-    var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
-</script>
-<script>
-    var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
-</script>
-<!-- Example using a CDN -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<!-- Add this script at the end of your HTML file, before closing </body> -->
-<script>
-    $(document).ready(function () {
-        $('#payButton').click(function () {
-            $('#paymentModal').modal('show');
-        });
+                // Add additional logic here to handle payment confirmation
+                $('#confirmPayment').click(function () {
+                    // Get values from input fields
+                    var phoneNumber = $('#phoneNumber').val();
+                    var fullName = $('#fullName').val();
+                    var email = $('#email').val();
+                    var street = $('#street').val(); // Add these lines for new address details
+                    var city = $('#city').val();
+                    var houseNumber = $('#houseNumber').val();
+                    // Perform validation if needed
+                    var totalSum = totalSum;
+                    // window.location.href = '/Home/Ordering' +
+                    //     '&totalSum=' + totalSum;
+                    // Call a function to submit payment and create order
+                    submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum);
+                });
+            });
 
-        // Add additional logic here to handle payment confirmation
-        $('#confirmPayment').click(function () {
-            // Get values from input fields
-            var creditCard = $('#creditCard').val();
-            var phoneNumber = $('#phoneNumber').val();
-            var fullName = $('#fullName').val();
-            var email = $('#email').val();
-            // Perform validation if needed
-
-            // Call a function to submit payment and create order
-            submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email);
-        });
-    });
-
-    function submitPaymentAndCreateOrder(creditCard, phoneNumber, fullName, email, total) {
-        // Use AJAX or another method to send payment information to the server
-        $.post('/Cart/Pay', {
-            creditCard: creditCard,
-            phoneNumber: phoneNumber,
-            fullName: fullName,
-            email: email,
-            total: @totalSum, // Assuming totalSum is the total on the cart page
-        }, function (response) {
-            // Handle the response from the server
-            if (response.success) {
-                // Payment successful, close the modal or redirect to a thank you page
-                $('#paymentModal').modal('hide');
-                // Optionally redirect to a thank you page
-            } else {
-                // Payment failed, display an error message
-                alert('Payment failed. Please try again.');
-            }
-        });
-    }
-
-</script>
-
-}
+            function submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum) {
+                    // Use AJAX or another method to send payment information to the server
+                    event.preventDefault();
+                    $.post('/Cart/Pay', {
+                        street: street,
+                        city: city,
+                        houseNumber: houseNumber,
+                        phoneNumber: phoneNumber,
+                        fullName: fullName,
+                        email: email,
+                        total: totalSum,
+                    }, function (response) {
+                        // Handle the response from the server
+                        if (response.success) {
+                            // Payment successful, close the modal or redirect to a thank you page
+                            $('#paymentModal').modal('hide');
+                            // Optionally redirect to a thank you page
+                        window.location.href = `/PayPal.html?totalSum=${totalSum}`;
+                        } else {
+                            // Payment failed, display an error message
+                            alert('Payment failed. Please try again.');
+                        }
+                    });
+                }
+            </script>
+        }

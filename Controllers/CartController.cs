@@ -15,6 +15,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using DocumentFormat.OpenXml.Vml;
 
 
 namespace CloudSaba.Controllers
@@ -152,7 +153,7 @@ namespace CloudSaba.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay(string creditCard, string phoneNumber, string fullName, string email, decimal total)
+        public IActionResult Pay(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
         {
             HttpContext.Session.LoadAsync().Wait();
             // Validate payment information if needed
@@ -164,9 +165,9 @@ namespace CloudSaba.Controllers
                 LastName = fullName.Split(' ')[1],
                 PhoneNumber = phoneNumber,
                 Email = email,
-                Street = "rt",
-                City = "hh",
-                HouseNumber = 5,
+                Street = street,
+                City = city,
+                HouseNumber = houseNumber,
                 Total = (double)total,
                 Products = _context.CartItem.Where(ci => ci.CartId == cartId).ToList(),
                 Date = DateTime.Now,
@@ -183,6 +184,7 @@ namespace CloudSaba.Controllers
             _context.SaveChanges();
             // Clear the entire session after processing the payment
             HttpContext.Session.Clear();
+            //return View("~/Views/Home/Ordering.cshtml", newOrder);
             return Json(new { success = true, message = "Payment successful" });
         }
 
