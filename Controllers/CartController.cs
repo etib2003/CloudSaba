@@ -16,6 +16,9 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using DocumentFormat.OpenXml.Vml;
+using CloudSaba.Services;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 
 namespace CloudSaba.Controllers
@@ -23,9 +26,13 @@ namespace CloudSaba.Controllers
     public class CartController : Controller
     {
         private readonly CloudSabaContext _context;
-        public CartController(CloudSabaContext context)
+        private readonly ApiServices _apiServices; // Add this line
+
+        public CartController(CloudSabaContext context, ApiServices apiServices) // Add ApiServices parameter
         {
             _context = context;
+            _apiServices = apiServices; // Initialize ApiServices
+
             // Configure session services
             ConfigureSessionServices(services: new ServiceCollection());
         }
@@ -88,17 +95,17 @@ namespace CloudSaba.Controllers
                 await _context.SaveChangesAsync();
                 return Json(new { success = true, message = "Product added to cart" });
             }
-              catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.ToString() });
-            }  
-            
+            }
+
         }
         //[ValidateAntiForgeryToken] //ETI by GPT:Ensure that sensitive operations like modifying the cart are protected from cross-site request forgery (CSRF) attacks. You can do this by adding the [ValidateAntiForgeryToken] attribute to your actions.
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(string productId)
         {
-            try 
+            try
             {
                 var products = _context.IceCream.ToList();
                 var itemInfo = products.FirstOrDefault(p => p.Id == productId);
@@ -141,7 +148,7 @@ namespace CloudSaba.Controllers
             var cartItemsWithIceCream = await (
                 from cartItem in _context.CartItem
                 join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
-                where cartItem.CartId == cartId 
+                where cartItem.CartId == cartId
                 select new CartView
                 {
                     CartItem = cartItem,
@@ -153,11 +160,19 @@ namespace CloudSaba.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
+        public async Task<IActionResult> PayAsync(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
         {
             HttpContext.Session.LoadAsync().Wait();
             // Validate payment information if needed
             string cartId = GetOrCreateCartId();
+
+            bool isValidAddresss = await _apiServices.CheckAddressExistence(city, street);
+            bool _IsItHoliday = await _apiServices.IsItHoliday();
+
+            Weather wez = await _apiServices.FindWeatherAsync(city);
+            double _FeelsLike = (double)wez.FeelsLike;
+            double _Humidity = (double)wez.Humidity;
+
             // Create a new order with the provided information
             var newOrder = new Models.Order
             {
@@ -171,10 +186,10 @@ namespace CloudSaba.Controllers
                 Total = (double)total,
                 Products = _context.CartItem.Where(ci => ci.CartId == cartId).ToList(),
                 Date = DateTime.Now,
-                FeelsLike = 43,
-                Humidity = 34,
-                IsItHoliday = true,
-                Day = Models.DayOfWeek.Tuesday
+                FeelsLike = _FeelsLike,
+                Humidity = _Humidity,
+                IsItHoliday = _IsItHoliday,
+                Day = (Models.DayOfWeek)DateTime.Now.DayOfWeek
                 // Add other properties as needed
             };
 
@@ -208,9 +223,9 @@ namespace CloudSaba.Controllers
         // GET: Cart
         public async Task<IActionResult> Index()
         {
-              return _context.CartItem != null ? 
-                          View(await _context.CartItem.ToListAsync()) :
-                          Problem("Entity set 'CloudSabaContext.CartItem'  is null.");
+            return _context.CartItem != null ?
+                        View(await _context.CartItem.ToListAsync()) :
+                        Problem("Entity set 'CloudSabaContext.CartItem'  is null.");
         }
 
         // GET: Cart/Details/5
@@ -336,14 +351,14 @@ namespace CloudSaba.Controllers
             {
                 _context.CartItem.Remove(cartItem);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CartItemExists(string id)
         {
-          return (_context.CartItem?.Any(e => e.ItemId == id)).GetValueOrDefault();
+            return (_context.CartItem?.Any(e => e.ItemId == id)).GetValueOrDefault();
         }
     }
 }
