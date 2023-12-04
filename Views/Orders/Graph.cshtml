@@ -5,6 +5,8 @@
 }
 @model OrderGraphViewModel
 
+model OrderGraphViewModel
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +21,10 @@
     <form method="get" action="/Orders/Graph">
         <label for="startDate">Start Date:</label>
         <input type="date" id="startDate" name="start" required>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="end" required>
+
         <button type="submit">Generate Graph</button>
     </form>
 
@@ -72,7 +78,7 @@
                     },
                     layout: {
                         padding: {
-                            bottom: 20 // Adjust as needed to give more room for the labels
+                            bottom: 20
                         }
                     }
                 }
@@ -81,5 +87,3 @@
     </script>
 </body>
 </html>
-
-
