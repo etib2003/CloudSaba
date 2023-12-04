@@ -9,57 +9,62 @@
     <div class="container">
         @if (Model.Any())
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <style>
+                .item-card {
+                    background-color: #f8f9fa; /* You can remove this line */
+                    margin-bottom: 20px;
+                }
+
+                .total-card {
+                    background-color: #f8f9fa; /* Light gray background */
+                }
+            </style>
+
+            <div class="container">
+                <div class="row">
                     @foreach (var cartView in Model)
                     {
-                        <tr>
-                            <td class="icecream-image" style="width: 50px; height: 50px;">
-                                <img class="rounded-circle w-100 h-100" src="~/@cartView.IceCream.ImageUrl" style="object-fit: cover;">
-                            </td>
-                            @*   <td><img src="@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" style="max-width: 100px;" /></td> *@
-                            <td>@cartView.IceCream.Name</td>
-                            <td>@cartView.IceCream.Price</td>
-                            <td>@cartView.CartItem.Quantity</td>
-                            <td>@(cartView.CartItem.Quantity * cartView.IceCream.Price)</td>
-                            <td>
-                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-secondary add-to-cart-btn">Add to Cart</button>
-                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-sm btn-danger remove-from-cart-btn">Remove</button>
-                            </td>
-                        </tr>
+                        <div class="col-md-6 mb-3">
+                            <div class="card item-card">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        <img src="~/@cartView.IceCream.ImageUrl" alt="@cartView.IceCream.Name" class="img-fluid rounded-start">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@cartView.IceCream.Name</h5>
+                                            <p class="card-text">Price: $@cartView.IceCream.Price</p>
+                                            <p class="card-text">Quantity: @cartView.CartItem.Quantity</p>
+                                            <p class="card-text">Total: $@(cartView.CartItem.Quantity * cartView.IceCream.Price)</p>
+                                            <div class="btn-group">
+                                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-secondary add-to-cart-btn">Add to Cart</button>
+                                                <button data-product-id="@cartView.IceCream.Id" class="btn btn-danger remove-from-cart-btn">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
 
-            <tr>
-                <td colspan="4"></td>
-                <td>Total:</td>
-                <td class="text-center">
-                    @{
-                        // Calculate the total sum
-                        decimal totalSum = Model.Sum(cartView => cartView.CartItem.Quantity * cartView.IceCream.Price);
-                    }
-                    @totalSum
-                </td>
-                <td></td>
+                <div class="row mt-4">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="card total-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Total:</h5>
+                                @{
+                                    decimal totalSum = Model.Sum(cartView => cartView.CartItem.Quantity * cartView.IceCream.Price);
+                                }
+                                <p class="card-text">Total Amount: $@totalSum</p>
+                                <button class="btn btn-success" id="payButton">Pay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            </tr>
-            @*             <div class="row">
-        <div class="col-md-12">
-        <a asp-action="Checkout" class="btn btn-success" id="payButton">Proceed To Checkout</a>
-        </div>
-        </div> *@
-            <button class="btn btn-success" id="payButton">Pay</button>
+
         }
         else
         {

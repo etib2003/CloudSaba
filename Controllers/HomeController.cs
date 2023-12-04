@@ -14,10 +14,22 @@ namespace CloudSaba.Controllers
             {
                 _context = context;
             }
+        private void ClearCart()
+        {
+            // Assuming you have a Cart entity in your context, you can do something like this:
+            var cartItems = _context.CartItem.ToList();
 
-            // GET: HomeController
-            public ActionResult Index()
+            foreach (var item in cartItems)
             {
+                _context.CartItem.Remove(item);
+            }
+
+            _context.SaveChanges();
+        }
+        // GET: HomeController
+        public ActionResult Index()
+            {
+                //ClearCart();
                 ViewBag.Place = "Home";
                 return View("Index");
             }
