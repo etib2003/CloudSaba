@@ -183,6 +183,7 @@ Note: Return a short answer! and accurate, a maximum answer of up to 50 words!, 
             // Process the GPT response and present the results to the manager
 
             // Render a view with the results or return a JSON response
+            ViewBag.Place = "Prediction";
             return View("PredictIceCreamResults", gptResponse);
         }
 
@@ -191,6 +192,7 @@ Note: Return a short answer! and accurate, a maximum answer of up to 50 words!, 
         // GET: ManagerController
         public ActionResult Index()
         {
+            ViewBag.Place = "Manager";
             return View();
         }
 

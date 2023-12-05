@@ -4,10 +4,6 @@
     ViewData["Title"] = "Graph";
     Layout = "~/Views/Shared/_ManagerLayout.cshtml";
 }
-
-
-model OrderGraphViewModel
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,21 +13,19 @@ model OrderGraphViewModel
 </head>
 <body>
     <!-- Form for selecting date range -->
-    <form method="get" action="/Orders/Graph">
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate" name="start" required>
+    <form method="get" action="/Orders/Graph" style="margin-top: 20px; text-align: center;">
+        <label for="startDate" style="margin-right: 10px;">Start Date:</label>
+        <input type="date" id="startDate" name="start" required style="padding: 5px;">
 
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate" name="end" required>
+        <label for="endDate" style="margin-left: 10px; margin-right: 10px;">End Date:</label>
+        <input type="date" id="endDate" name="end" required style="padding: 5px;">
 
-        <button type="submit">Generate Graph</button>
+        <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Generate Graph</button>
     </form>
-
     <!-- Canvas for the Chart.js chart -->
     <div style="max-width: 800px; margin: auto;">
         <canvas id="orderChart" width="800" height="600"></canvas>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var ctx = document.getElementById('orderChart').getContext('2d');
@@ -50,7 +44,7 @@ model OrderGraphViewModel
                     },
                     {
                         label: 'Order Count',
-                        data: @Html.Raw(Json.Serialize(Model.DateLabels)),
+                        data: @Html.Raw(Json.Serialize(Model.OrderCounts)), // Corrected line
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1,
@@ -59,7 +53,6 @@ model OrderGraphViewModel
                     }
                 ]
             };
-
             var chart = new Chart(ctx, {
                 type: 'bar',
                 data: chartData,
