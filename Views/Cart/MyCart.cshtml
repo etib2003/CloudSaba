@@ -111,7 +111,7 @@
                                 @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
                                 <div class="col-md-12">
 
-                                <a href="~/path/to/PayPal.html" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
+                            <a href="#" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
                                 </div>
                             </div>
                         </div>
@@ -120,61 +120,50 @@
             </div>
             <!-- Add your footer content here -->
         <!-- Example using a CDN -->
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
             var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
-        </script>
+    </script>
             <script>
                 var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
             </script>
             <!-- Add this script at the end of your HTML file, before closing </body> -->
-            <script>
-                $(document).ready(function () {
-                $('#payButton').click(function () {
-                    $('#paymentModal').modal('show');
-                });
-
-                // Add additional logic here to handle payment confirmation
-                $('#confirmPayment').click(function () {
-                    // Get values from input fields
-                    var phoneNumber = $('#phoneNumber').val();
-                    var fullName = $('#fullName').val();
-                    var email = $('#email').val();
-                    var street = $('#street').val(); // Add these lines for new address details
-                    var city = $('#city').val();
-                    var houseNumber = $('#houseNumber').val();
-                    // Perform validation if needed
-                    var totalSum = totalSum;
-                    // window.location.href = '/Home/Ordering' +
-                    //     '&totalSum=' + totalSum;
-                    // Call a function to submit payment and create order
-                    submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum);
-                });
+    <script>
+        $(document).ready(function () {
+            $('#payButton').click(function () {
+                $('#paymentModal').modal('show');
             });
 
-            function submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum) {
-                    // Use AJAX or another method to send payment information to the server
-                    event.preventDefault();
-                    $.post('/Cart/Pay', {
-                        street: street,
-                        city: city,
-                        houseNumber: houseNumber,
-                        phoneNumber: phoneNumber,
-                        fullName: fullName,
-                        email: email,
-                        total: totalSum,
-                    }, function (response) {
-                        // Handle the response from the server
-                        if (response.success) {
-                            // Payment successful, close the modal or redirect to a thank you page
-                            $('#paymentModal').modal('hide');
-                            // Optionally redirect to a thank you page
-                        window.location.href = `/PayPal.html?totalSum=${totalSum}`;
-                        } else {
-                            // Payment failed, display an error message
-                            alert('Payment failed. Please try again.');
-                        }
-                    });
-                }
-            </script>
-        }
+            $('#confirmPayment').click(function () {
+                var phoneNumber = $('#phoneNumber').val();
+                var fullName = $('#fullName').val();
+                var email = $('#email').val();
+                var street = $('#street').val();
+                var city = $('#city').val();
+                var houseNumber = $('#houseNumber').val();
+                var totalSum = totalSum;
+
+                // Update the action name to use PayAsync instead of Pay
+                var payAsyncUrl = '@Url.Action("PayAsync", "Cart")';
+                $.post(payAsyncUrl, {
+                    street: street,
+                    city: city,
+                    houseNumber: houseNumber,
+                    phoneNumber: phoneNumber,
+                    fullName: fullName,
+                    email: email,
+                    total: totalSum,
+                }, function (response) {
+                    if (response.success) {
+                        $('#paymentModal').modal('hide');
+                        window.location.href = '/PayPal.html?totalSum=' + totalSum;
+                    } else {
+                        alert('Payment failed. Please try again.');
+                    }
+                });
+            });
+        });
+
+    </script>
+
+}

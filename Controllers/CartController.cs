@@ -59,11 +59,15 @@ namespace CloudSaba.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(productId))
+                {
+                    return Json(new { success = false, message = "Product ID is required." });
+                }
                 var products = _context.IceCream.ToList();
                 var itemInfo = products.FirstOrDefault(p => p.Id == productId);
                 if (itemInfo == null)
                 {
-                    //todo: problem! throw...
+                    return Json(new { success = false, message = "Product not found." });
                 }
                 // Get or create a unique cart identifier for the user
                 HttpContext.Session.LoadAsync().Wait();
@@ -107,11 +111,15 @@ namespace CloudSaba.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(productId))
+                {
+                    return Json(new { success = false, message = "Product ID is required." });
+                }
                 var products = _context.IceCream.ToList();
                 var itemInfo = products.FirstOrDefault(p => p.Id == productId);
                 if (itemInfo == null)
                 {
-                    //todo: problem! throw...
+                    return Json(new { success = false, message = "Product not found." });
                 }
                 HttpContext.Session.LoadAsync().Wait();
                 string cartId = GetOrCreateCartId();
@@ -142,24 +150,31 @@ namespace CloudSaba.Controllers
         [HttpGet]
         public async Task<IActionResult> MyCart()
         {
-            HttpContext.Session.LoadAsync().Wait();
-            string cartId = GetOrCreateCartId();
-            // Assuming you have a DbSet<IceCream> in your DbContext called IceCreams
-            var cartItemsWithIceCream = await (
-                from cartItem in _context.CartItem
-                join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
-                where cartItem.CartId == cartId
-                select new CartView
-                {
-                    CartItem = cartItem,
-                    IceCream = iceCream
-                }
-            ).ToListAsync();
-            ViewBag.Place = "My Cart";
-            return View(cartItemsWithIceCream);
-        }
+            try
+            {
+                HttpContext.Session.LoadAsync().Wait();
+                string cartId = GetOrCreateCartId();
 
-        [HttpPost]
+                var cartItemsWithIceCream = await (
+                    from cartItem in _context.CartItem
+                    join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
+                    where cartItem.CartId == cartId
+                    select new CartView
+                    {
+                        CartItem = cartItem,
+                        IceCream = iceCream
+                    }
+                ).ToListAsync();
+
+                ViewBag.Place = "My Cart";
+                return View(cartItemsWithIceCream);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.ToString());
+            }
+        }
+        [HttpPost("/Cart/PayAsync")]
         public async Task<IActionResult> PayAsync(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
         {
             HttpContext.Session.LoadAsync().Wait();
