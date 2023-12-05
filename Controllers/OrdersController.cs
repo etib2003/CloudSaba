@@ -35,7 +35,12 @@ namespace CloudSaba.Controllers
             // Prepare data for the view model
             var dateLabels = orders.Select(order => order.Date.ToShortDateString()).Distinct().ToList();
             var totalPrices = new List<double>();
+            var orderCounts = new List<int>();
 
+            foreach (var dateLabel in dateLabels)
+            {
+                orderCounts.Add(orders.Count(order => order.Date.ToShortDateString() == dateLabel));
+            }
             foreach (var dateLabel in dateLabels)
             {
                 totalPrices.Add(orders.Where(order => order.Date.ToShortDateString() == dateLabel).Sum(order => order.Total));
@@ -44,9 +49,10 @@ namespace CloudSaba.Controllers
             var viewModel = new OrderGraphViewModel
             {
                 DateLabels = dateLabels,
-                TotalPrices = totalPrices
+                TotalPrices = totalPrices,
+                OrderCounts = orderCounts // Add this line
             };
-
+            ViewBag.Place = "Graph";
             return View(viewModel); // Pass the view model to the view
         }
 
@@ -55,6 +61,7 @@ namespace CloudSaba.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
+            ViewBag.Place = "Orders";
             return _context.Order != null ?
                         View(await _context.Order.ToListAsync()) :
                         Problem("Entity set 'CloudSabaContext.Order'  is null.");

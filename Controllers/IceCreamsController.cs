@@ -28,7 +28,8 @@ namespace CloudSaba.Controllers
         // GET: IceCreams
         public async Task<IActionResult> Index()
         {
-              return _context.IceCream != null ? 
+            ViewBag.Place = "Flavors";
+            return _context.IceCream != null ? 
                           View(await _context.IceCream.ToListAsync()) :
                           Problem("Entity set 'CloudSabaContext.IceCream'  is null.");
         }
@@ -47,7 +48,7 @@ namespace CloudSaba.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.Place = "Flavors";
             return View(iceCream);
         }
 
