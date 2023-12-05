@@ -5,7 +5,7 @@
 
 <main>
     <!-- Hero Area End-->
-    <!--?  Contact Area start  -->
+    <!-- Contact Area start  -->
     <section class="contact-section">
         <div class="container">
             <div class="row">
@@ -22,45 +22,45 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <input class="form-control valid" name="name" id="name" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" placeholder="Enter your name">
+                                    <input class="form-control valid" name="name" id="name" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your name'" placeholder="Your name">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <input class="form-control valid" name="email" id="email" type="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="Email">
+                                    <input class="form-control valid" name="email" id="email" type="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" placeholder="Email">
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <input class="form-control" name="subject" id="subject" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'" placeholder="Enter Subject">
+                                    <input class="form-control" name="subject" id="subject" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Subject'" placeholder="Subject">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mt-3">
-                            <button type="submit" class="button button-contactForm boxed-btn">Send</button>
+                            <button type="submit" class="button button-contactForm pink-btn">Send</button>
                         </div>
                     </form>
                 </div>
                 <div class="col-lg-3 offset-lg-1">
                     <div class="media contact-info">
-                        <span class="contact-info__icon"><i class="ti-home"></i></span>
+                        <span class="contact-info__icon">🏠</span>
                         <div class="media-body">
-                            <h3> Israel.</h3>
-                            <p>Allenby 27, Tel Aviv</p>
+                            <h3 class="contact-info__title">Israel</h3>
+                            <p class="contact-info__text">Allenby 27, Tel Aviv</p>
                         </div>
                     </div>
                     <div class="media contact-info">
-                        <span class="contact-info__icon"><i class="ti-tablet"></i></span>
+                        <span class="contact-info__icon">📞</span>
                         <div class="media-body">
-                            <h3>054 584 55118</h3>
-                            <p>Sun to Fri 8am to 5pm</p>
+                            <h3 class="contact-info__title">054 584 55118</h3>
+                            <p class="contact-info__text">Sun to Fri 8am to 5pm</p>
                         </div>
                     </div>
                     <div class="media contact-info">
-                        <span class="contact-info__icon"><i class="ti-email"></i></span>
+                        <span class="contact-info__icon">✉️</span>
                         <div class="media-body">
-                            <h3>Saba@gmail.com</h3>
-                            <p>Send us your query anytime!</p>
+                            <h3 class="contact-info__title">Saba@gmail.com</h3>
+                            <p class="contact-info__text">Send us your query anytime!</p>
                         </div>
                     </div>
                 </div>
@@ -69,3 +69,25 @@
     </section>
     <!-- Contact Area End -->
 </main>
+
+<style>
+    /* Add this style block to your existing styles or CSS file */
+
+    .pink-btn {
+        background-color: #ff66b2; /* Pink color */
+        color: #fff; /* White text */
+        padding: 15px 30px; /* Adjust padding for a normal size */
+        font-size: 18px; /* Adjust font size as needed */
+    }
+
+    .contact-info__title {
+        font-size: 16px; /* Adjust font size for title */
+        margin-bottom: 5px; /* Add some spacing */
+    }
+
+    .contact-info__text {
+        font-size: 14px; /* Adjust font size for text */
+        margin-bottom: 10px; /* Add some spacing */
+    }
+</style>
+
