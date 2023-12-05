@@ -187,20 +187,25 @@ namespace CloudSaba.Controllers
                 return View(ex.ToString());
             }
         }
+        [HttpPost("/Cart/CheckAddress")]
+        public async Task<IActionResult> CheckAddress(string city, string street)
+        {
+            bool isValidAddress = await _apiServices.CheckAddressExistence(city, street);
+
+            if (!isValidAddress)
+            {
+                return Json(new { isValid = false, errors = new { street = true, city = true } });
+            }
+
+            return Json(new { isValid = true });
+        }
         [HttpPost("/Cart/PayAsync")]
         public async Task<IActionResult> PayAsync(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
         {
             HttpContext.Session.LoadAsync().Wait();
             // Validate payment information if needed
             string cartId = GetOrCreateCartId();
-
-            bool isValidAddresss = await _apiServices.CheckAddressExistence(city, street);
             bool _IsItHoliday = await _apiServices.IsItHoliday();
-            if(isValidAddresss==false)
-            {
-                ModelState.AddModelError("Street", "Invalid address. Please enter a valid city and street.");
-                return Json(new { success = false, errorCode = "InvalidAddress", message = "Invalid address. Please enter a valid city and street." });
-            }
             Weather wez = await _apiServices.FindWeatherAsync(city);
             double _FeelsLike = (double)wez.FeelsLike;
             double _Humidity = (double)wez.Humidity;
