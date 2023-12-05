@@ -76,6 +76,8 @@ namespace CloudSaba.Controllers
                 var existingItem = cartItems.FirstOrDefault(
                          cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
                          );
+                var itemCount = cartItems.Count(
+                         cartItem => cartItem.CartId == cartId);
                 if (existingItem != null)
                 {
                     // Update quantity if the item is already in the cart
@@ -96,8 +98,15 @@ namespace CloudSaba.Controllers
                         OrderId = Guid.NewGuid().ToString()
                     });
                 }
-                await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Product added to cart" });
+                if (itemCount >= 5)
+                {
+                    return Json(new { succes = false, message = "you can only add upto 5 products to the cart" });
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, message = "Product added to cart" });
+                }
             }
             catch (Exception ex)
             {
@@ -132,6 +141,10 @@ namespace CloudSaba.Controllers
                     // Update quantity if the item is already in the cart
                     existingItem.Quantity -= 1;
                     existingItem.Price -= itemInfo.Price;
+                    if (existingItem.Quantity == 0)
+                    {
+                        _context.CartItem.Remove(existingItem);
+                    }
                 }
                 else
                 {
@@ -183,7 +196,11 @@ namespace CloudSaba.Controllers
 
             bool isValidAddresss = await _apiServices.CheckAddressExistence(city, street);
             bool _IsItHoliday = await _apiServices.IsItHoliday();
-
+            if(isValidAddresss==false)
+            {
+                ModelState.AddModelError("Street", "Invalid address. Please enter a valid city and street.");
+                return Json(new { success = false, errorCode = "InvalidAddress", message = "Invalid address. Please enter a valid city and street." });
+            }
             Weather wez = await _apiServices.FindWeatherAsync(city);
             double _FeelsLike = (double)wez.FeelsLike;
             double _Humidity = (double)wez.Humidity;
