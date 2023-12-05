@@ -5,13 +5,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PayPal Payment</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #paypal-button-container {
+            max-width: 1000px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: pink;
+            color: white;
+            padding: 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+            button:hover {
+                background-color: #ff66b2;
+            }
+
+        #thank-you-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+            #thank-you-button:hover {
+                background-color: #45a049;
+            }
+
+        .image-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+            .image-container img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+            }
+    </style>
     <!-- Include PayPal JavaScript SDK -->
     <script src="https://www.paypal.com/sdk/js?client-id=AeW75ddn1jvC9WLXakf-WMAJk7tVRZr_JiP5tMnipP_Vbr852_8m3MNhKDB4oONgxNASvmMMe2zrfF2z&components=buttons"></script>
 </head>
 
 <body>
-    <div id="paypal-button-container" style="max-width: 1000px;"></div>
-    <button onclick="redirectToThankYou()" style="background-color: pink; color: white; padding: 10px; margin-top: 10px;">Thank You</button>
+    <div id="paypal-button-container"></div>
+    <button onclick="redirectToThankYou()">Order Confirmation</button>
 
     <script>
         function getUrlParameter(name) {

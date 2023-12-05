@@ -1,9 +1,10 @@
-﻿
+﻿@model OrderGraphViewModel
+
 @{
     ViewData["Title"] = "Graph";
     Layout = "~/Views/Shared/_ManagerLayout.cshtml";
 }
-@model OrderGraphViewModel
+
 
 model OrderGraphViewModel
 
@@ -15,8 +16,6 @@ model OrderGraphViewModel
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Order Graph</h1>
-
     <!-- Form for selecting date range -->
     <form method="get" action="/Orders/Graph">
         <label for="startDate">Start Date:</label>
