@@ -43,7 +43,6 @@ namespace CloudSaba.Controllers
         FeelsLike: {order.FeelsLike}
         Humidity: {order.Humidity}
         Day: {order.Day}
-        Amount: {amount}
     ";
 
             return orderDataString;
@@ -143,6 +142,8 @@ namespace CloudSaba.Controllers
             // Format orders data into a string
             var inputText = string.Join("\n\n", orders.Select(GetOrdersDataAsString));
 
+            var flavors = string.Join("\n\n", _context.IceCream.Select(iceCream => iceCream.Name).ToList());
+
             // Create a specific prompt for GPT prediction
             var SpecifyCityHere = "Tel Aviv";
             Weather wez = await _apiServices.FindWeatherAsync(SpecifyCityHere);
@@ -152,14 +153,18 @@ namespace CloudSaba.Controllers
             var SpecifyFeelsLikeTemperatureHere = wez.FeelsLike.ToString();
             var IsItHoliday = await _apiServices.IsItHoliday();
 
+
             var prompt = $@"
 Ice Cream Consumption Prediction:
 
 Recent Orders:
 {inputText}
 
+The flavors available in the store:
+{flavors}
+
 Contextual Factors:
-- Amount of ice creams.
+- The flavors available in the store.
 - Day of the Week: {(Models.DayOfWeek)DateTime.Now.DayOfWeek}
 - Humidity Level: {SpecifyHumidityLevelHere}
 - Feels Like Temperature: {SpecifyFeelsLikeTemperatureHere}
@@ -167,9 +172,8 @@ Contextual Factors:
 - Is there a holiday this week: {IsItHoliday}
 
 Guidance for Prediction:
-Given the historical orders, predict how much ice cream will be bought on {date}. Consider factors like current weather, day of the week, and past preferences. Provide a detailed forecast with qualitative and quantitative insights. Mention any observed patterns or notable considerations.
-
-Note: Return a short answer! and accurate, a maximum answer of up to 60 words, focusing on relevant details and insights.";
+Given the historical orders and the Factors, predict which ice cream flavor will consume the most on {date}. Consider factors like current weather, day of the week, and past preferences. Provide a detailed forecast with qualitative and quantitative insights. Mention any observed patterns or notable considerations.
+Note: Return a short answer! and accurate, a maximum answer of up to 50 words!, focusing on relevant details and insights.";
 
 
             Console.WriteLine(prompt);
