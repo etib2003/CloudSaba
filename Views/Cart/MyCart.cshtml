@@ -110,6 +110,7 @@
                                 <label for="email">Email</label>
                                 <input type="text" id="email" name="email" placeholder="Email" class="form-control">
                             </div>
+
                             <div class="form-group">
                                 <label for="street">Street</label>
                                 <input type="text" id="street" name="street" placeholder="Street" class="form-control">
@@ -125,7 +126,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <a href="~/path/to/PayPal.html" class="btn btn-primary" id="confirmPayment" onclick="validateForm()">PayToOrder</a>
+                        <a href="#" class="btn btn-primary" id="confirmPayment" onclick="validateForm()">PayToOrder</a>
                     </div>
                 </div>
             </div>
@@ -179,20 +180,32 @@
 
                 // Update the action name to use PayAsync instead of Pay
                 var payAsyncUrl = '@Url.Action("PayAsync", "Cart")';
-                $.post(payAsyncUrl, {
-                    street: street,
-                    city: city,
-                    houseNumber: houseNumber,
-                    phoneNumber: phoneNumber,
-                    fullName: fullName,
-                    email: email,
-                    total: totalSum,
-                }, function (response) {
-                    if (response.success) {
-                        $('#paymentModal').modal('hide');
-                        window.location.href = '/PayPal.html?totalSum=' + totalSum;
+
+                // Perform address validation
+                $.post('@Url.Action("CheckAddress", "Cart")', { city: city, street: street }, function (addressValidationResult) {
+                    if (addressValidationResult.isValid) {
+                        // Proceed with payment if the address is valid
+                        $.post(payAsyncUrl, {
+                            street: street,
+                            city: city,
+                            houseNumber: houseNumber,
+                            phoneNumber: phoneNumber,
+                            fullName: fullName,
+                            email: email,
+                            total: totalSum,
+                        }, function (response) {
+                            if (response.success) {
+                                $('#paymentModal').modal('hide');
+                                window.location.href = '/PayPal.html?totalSum=' + totalSum;
+                            } else {
+                                alert('Payment failed. Please try again.');
+                            }
+                        });
                     } else {
-                        alert('Payment failed. Please try again.');
+                        // Display validation errors for address
+                        $('#street').css('border-color', addressValidationResult.errors.street ? 'red' : '');
+                        $('#city').css('border-color', addressValidationResult.errors.city ? 'red' : '');
+                        alert('Invalid address. Please enter a valid city and street.');
                     }
                 });
             });
