@@ -84,97 +84,120 @@
                 </div>
             </div>
         }
-
-
-                <!-- Add this code at the end of your HTML file, before closing </main> -->
-                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="paymentModalLabel">Enter Payment Information</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+        <!-- Add this code at the end of your HTML file, before closing </main> -->
+        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paymentModalLabel">Enter Payment Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add your input fields for credit card, phone number, and name here -->
+                        <!-- Example: -->
+                        <form id="paymentForm">
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" class="form-control">
                             </div>
-                            <div class="modal-body">
-                                <!-- Add your input fields for credit card, phone number, and name here -->
-                                <!-- Example: -->
-                                <input type="text" id="phoneNumber" placeholder="Phone Number" class="form-control">
-                                <input type="text" id="fullName" placeholder="Full Name" class="form-control">
-                                <input type="text" id="email" placeholder="Email" class="form-control">
-                                <input type="text" id="street" placeholder="Street" class="form-control">
-                                <input type="text" id="city" placeholder="City" class="form-control">
-                                <input type="text" id="houseNumber" placeholder="House Number" class="form-control">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Full Name" class="form-control">
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                @* <button  a asp-action="Thankyou" type="button" class="btn btn-primary" id="confirmPayment">Pay</button> *@
-                                <div class="col-md-12">
-
-                                <a href="~/path/to/PayPal.html" class="btn btn-primary" id="confirmPayment">PayToOrder</a>
-                                </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="text" id="email" name="email" placeholder="Email" class="form-control">
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label for="street">Street</label>
+                                <input type="text" id="street" name="street" placeholder="Street" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" placeholder="City" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="houseNumber">House Number</label>
+                                <input type="text" id="houseNumber" name="houseNumber" placeholder="House Number" class="form-control">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="~/path/to/PayPal.html" class="btn btn-primary" id="confirmPayment" onclick="validateForm()">PayToOrder</a>
                     </div>
                 </div>
             </div>
-            <!-- Add your footer content here -->
+        </div>
+    </div>
+
+    <!-- Add your footer content here -->
+
+    <script>
+        function validateForm() {
+            var isValid = true;
+            $('#paymentForm input').each(function () {
+                if (!$(this).val()) {
+                    isValid = false;
+                    $(this).css('border-color', 'red');
+                } else {
+                    $(this).css('border-color', '');
+                }
+            });
+
+            if (isValid) {
+                // Submit the form or perform further actions
+                // For now, let's just close the modal
+                $('#paymentModal').modal('hide');
+            }
+        }
+    </script>
         <!-- Example using a CDN -->
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
             var addToCartUrl = '@Url.Action("AddToCart", "Cart")';
-        </script>
+    </script>
             <script>
                 var removeFromCartUrl = '@Url.Action("RemoveFromCart", "Cart")';
             </script>
             <!-- Add this script at the end of your HTML file, before closing </body> -->
-            <script>
-                $(document).ready(function () {
-                $('#payButton').click(function () {
-                    $('#paymentModal').modal('show');
-                });
-
-                // Add additional logic here to handle payment confirmation
-                $('#confirmPayment').click(function () {
-                    // Get values from input fields
-                    var phoneNumber = $('#phoneNumber').val();
-                    var fullName = $('#fullName').val();
-                    var email = $('#email').val();
-                    var street = $('#street').val(); // Add these lines for new address details
-                    var city = $('#city').val();
-                    var houseNumber = $('#houseNumber').val();
-                    // Perform validation if needed
-                    var totalSum = totalSum;
-                    // window.location.href = '/Home/Ordering' +
-                    //     '&totalSum=' + totalSum;
-                    // Call a function to submit payment and create order
-                    submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum);
-                });
+    <script>
+        $(document).ready(function () {
+            $('#payButton').click(function () {
+                $('#paymentModal').modal('show');
             });
 
-            function submitPaymentAndCreateOrder(street, city, houseNumber, phoneNumber, fullName, email, totalSum) {
-                    // Use AJAX or another method to send payment information to the server
-                    event.preventDefault();
-                    $.post('/Cart/Pay', {
-                        street: street,
-                        city: city,
-                        houseNumber: houseNumber,
-                        phoneNumber: phoneNumber,
-                        fullName: fullName,
-                        email: email,
-                        total: totalSum,
-                    }, function (response) {
-                        // Handle the response from the server
-                        if (response.success) {
-                            // Payment successful, close the modal or redirect to a thank you page
-                            $('#paymentModal').modal('hide');
-                            // Optionally redirect to a thank you page
-                        window.location.href = `/PayPal.html?totalSum=${totalSum}`;
-                        } else {
-                            // Payment failed, display an error message
-                            alert('Payment failed. Please try again.');
-                        }
-                    });
-                }
-            </script>
-        }
+            $('#confirmPayment').click(function () {
+                var phoneNumber = $('#phoneNumber').val();
+                var fullName = $('#fullName').val();
+                var email = $('#email').val();
+                var street = $('#street').val();
+                var city = $('#city').val();
+                var houseNumber = $('#houseNumber').val();
+                var totalSum = totalSum;
+
+                // Update the action name to use PayAsync instead of Pay
+                var payAsyncUrl = '@Url.Action("PayAsync", "Cart")';
+                $.post(payAsyncUrl, {
+                    street: street,
+                    city: city,
+                    houseNumber: houseNumber,
+                    phoneNumber: phoneNumber,
+                    fullName: fullName,
+                    email: email,
+                    total: totalSum,
+                }, function (response) {
+                    if (response.success) {
+                        $('#paymentModal').modal('hide');
+                        window.location.href = '/PayPal.html?totalSum=' + totalSum;
+                    } else {
+                        alert('Payment failed. Please try again.');
+                    }
+                });
+            });
+        });
+
+    </script>
+
+}

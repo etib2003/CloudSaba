@@ -59,11 +59,15 @@ namespace CloudSaba.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(productId))
+                {
+                    return Json(new { success = false, message = "Product ID is required." });
+                }
                 var products = _context.IceCream.ToList();
                 var itemInfo = products.FirstOrDefault(p => p.Id == productId);
                 if (itemInfo == null)
                 {
-                    //todo: problem! throw...
+                    return Json(new { success = false, message = "Product not found." });
                 }
                 // Get or create a unique cart identifier for the user
                 HttpContext.Session.LoadAsync().Wait();
@@ -72,6 +76,8 @@ namespace CloudSaba.Controllers
                 var existingItem = cartItems.FirstOrDefault(
                          cartItem => cartItem.CartId == cartId && cartItem.ItemId == productId
                          );
+                var itemCount = cartItems.Count(
+                         cartItem => cartItem.CartId == cartId);
                 if (existingItem != null)
                 {
                     // Update quantity if the item is already in the cart
@@ -92,8 +98,15 @@ namespace CloudSaba.Controllers
                         OrderId = Guid.NewGuid().ToString()
                     });
                 }
-                await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Product added to cart" });
+                if (itemCount >= 5)
+                {
+                    return Json(new { succes = false, message = "you can only add upto 5 products to the cart" });
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, message = "Product added to cart" });
+                }
             }
             catch (Exception ex)
             {
@@ -107,11 +120,15 @@ namespace CloudSaba.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(productId))
+                {
+                    return Json(new { success = false, message = "Product ID is required." });
+                }
                 var products = _context.IceCream.ToList();
                 var itemInfo = products.FirstOrDefault(p => p.Id == productId);
                 if (itemInfo == null)
                 {
-                    //todo: problem! throw...
+                    return Json(new { success = false, message = "Product not found." });
                 }
                 HttpContext.Session.LoadAsync().Wait();
                 string cartId = GetOrCreateCartId();
@@ -124,6 +141,10 @@ namespace CloudSaba.Controllers
                     // Update quantity if the item is already in the cart
                     existingItem.Quantity -= 1;
                     existingItem.Price -= itemInfo.Price;
+                    if (existingItem.Quantity == 0)
+                    {
+                        _context.CartItem.Remove(existingItem);
+                    }
                 }
                 else
                 {
@@ -142,24 +163,31 @@ namespace CloudSaba.Controllers
         [HttpGet]
         public async Task<IActionResult> MyCart()
         {
-            HttpContext.Session.LoadAsync().Wait();
-            string cartId = GetOrCreateCartId();
-            // Assuming you have a DbSet<IceCream> in your DbContext called IceCreams
-            var cartItemsWithIceCream = await (
-                from cartItem in _context.CartItem
-                join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
-                where cartItem.CartId == cartId
-                select new CartView
-                {
-                    CartItem = cartItem,
-                    IceCream = iceCream
-                }
-            ).ToListAsync();
-            ViewBag.Place = "My Cart";
-            return View(cartItemsWithIceCream);
-        }
+            try
+            {
+                HttpContext.Session.LoadAsync().Wait();
+                string cartId = GetOrCreateCartId();
 
-        [HttpPost]
+                var cartItemsWithIceCream = await (
+                    from cartItem in _context.CartItem
+                    join iceCream in _context.IceCream on cartItem.ItemId equals iceCream.Id
+                    where cartItem.CartId == cartId
+                    select new CartView
+                    {
+                        CartItem = cartItem,
+                        IceCream = iceCream
+                    }
+                ).ToListAsync();
+
+                ViewBag.Place = "My Cart";
+                return View(cartItemsWithIceCream);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.ToString());
+            }
+        }
+        [HttpPost("/Cart/PayAsync")]
         public async Task<IActionResult> PayAsync(string street, string city, int houseNumber, string phoneNumber, string fullName, string email, decimal total)
         {
             HttpContext.Session.LoadAsync().Wait();
@@ -168,7 +196,11 @@ namespace CloudSaba.Controllers
 
             bool isValidAddresss = await _apiServices.CheckAddressExistence(city, street);
             bool _IsItHoliday = await _apiServices.IsItHoliday();
-
+            if(isValidAddresss==false)
+            {
+                ModelState.AddModelError("Street", "Invalid address. Please enter a valid city and street.");
+                return Json(new { success = false, errorCode = "InvalidAddress", message = "Invalid address. Please enter a valid city and street." });
+            }
             Weather wez = await _apiServices.FindWeatherAsync(city);
             double _FeelsLike = (double)wez.FeelsLike;
             double _Humidity = (double)wez.Humidity;
